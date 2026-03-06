@@ -1,159 +1,168 @@
 "use client"
-import { motion } from "framer-motion"
 
-// Update the colors object to use the project's color scheme
-const colors = {
-  primary: "#1E3246", // Navy - primary color
-  secondary: "#4A6B8A", // Navy light
-  accent: "#E76F51", // Coral
-  highlight: "#F0B429", // Gold
-  navy: {
-    DEFAULT: "#1E3246",
-    light: "#4A6B8A",
-    lighter: "#8DA9C4",
-    dark: "#0F1A24",
-  },
-  gold: {
-    DEFAULT: "#F0B429",
-    light: "#F7D070",
-    dark: "#D49A12",
-  },
-  coral: {
-    DEFAULT: "#E76F51",
-    light: "#F4A491",
-    dark: "#C24D32",
-  },
+import React from "react"
+
+const BLUE = "#0284C7"
+const BLUE_LIGHT = "#38BDF8"
+const BLUE_PALE = "rgba(2,132,199,0.08)"
+const BLUE_MED = "rgba(2,132,199,0.18)"
+const TEXT = "#64748B"
+const BORDER = "rgba(2,132,199,0.12)"
+
+// ─── REVENUE TREND (SVG Area Chart) ──────────────────────────────
+const revenuePoints = {
+  cafe:         [18, 22, 28, 24, 30, 27, 35, 32, 38, 34, 42, 45],
+  retail:       [32, 38, 35, 42, 48, 44, 52, 55, 50, 58, 62, 68],
+  restaurant:   [25, 30, 28, 35, 40, 37, 44, 48, 45, 52, 56, 60],
+  salon:        [20, 24, 22, 28, 32, 29, 35, 38, 36, 42, 44, 48],
 }
+const months = ["Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul"]
 
-// Category-specific color schemes using the project's colors
-const categoryColors = {
-  cafe: [colors.navy.DEFAULT, colors.navy.light, colors.navy.lighter, colors.gold.DEFAULT],
-  retail: [colors.gold.DEFAULT, colors.gold.light, colors.gold.dark, colors.navy.light],
-  restaurant: [colors.coral.DEFAULT, colors.coral.light, colors.coral.dark, colors.navy.lighter],
-  salon: [colors.navy.DEFAULT, colors.coral.DEFAULT, colors.gold.DEFAULT, colors.navy.lighter],
-}
+export function RevenueTrendChart({ category = "cafe" }: { category?: string }) {
+  const raw = revenuePoints[category] || revenuePoints.cafe
+  const max = Math.max(...raw)
+  const min = Math.min(...raw)
+  const W = 340, H = 130, padX = 8, padY = 12
 
-// Standardized Bar Chart with responsive dimensions
-export function StandardBarChart({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
+  // Build smooth cubic bezier curve through points
+  const pts = raw.map((v, i) => ({
+    x: padX + (i / (raw.length - 1)) * (W - padX * 2),
+    y: padY + (1 - (v - min) / (max - min + 1)) * (H - padY * 2),
+  }))
 
-  const barData = {
-    cafe: [
-      { label: "Coffee", value: 65, color: colorScheme[0] },
-      { label: "Pastries", value: 45, color: colorScheme[1] },
-      { label: "Sandwiches", value: 30, color: colorScheme[2] },
-      { label: "Beverages", value: 25, color: colorScheme[3] },
-    ],
-    retail: [
-      { label: "Apparel", value: 40, color: colorScheme[0] },
-      { label: "Electronics", value: 70, color: colorScheme[1] },
-      { label: "Home Goods", value: 55, color: colorScheme[2] },
-      { label: "Accessories", value: 35, color: colorScheme[3] },
-    ],
-    restaurant: [
-      { label: "Entrees", value: 55, color: colorScheme[0] },
-      { label: "Appetizers", value: 35, color: colorScheme[1] },
-      { label: "Desserts", value: 25, color: colorScheme[2] },
-      { label: "Beverages", value: 45, color: colorScheme[3] },
-    ],
-    salon: [
-      { label: "Haircuts", value: 60, color: colorScheme[0] },
-      { label: "Color", value: 75, color: colorScheme[1] },
-      { label: "Styling", value: 40, color: colorScheme[2] },
-      { label: "Products", value: 25, color: colorScheme[3] },
-    ],
+  const smooth = (points: {x:number,y:number}[]) => {
+    let d = `M ${points[0].x} ${points[0].y}`
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1]
+      const curr = points[i]
+      const cpx = (prev.x + curr.x) / 2
+      d += ` C ${cpx} ${prev.y}, ${cpx} ${curr.y}, ${curr.x} ${curr.y}`
+    }
+    return d
   }
 
-  const data = barData[category] || barData.cafe
+  const linePath = smooth(pts)
+  const areaPath = `${linePath} L ${pts[pts.length-1].x} ${H} L ${pts[0].x} ${H} Z`
+  const change = category === "retail" ? "10%" : category === "restaurant" ? "18%" : category === "salon" ? "12%" : "15%"
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 relative">
-        {/* Fixed height container for the chart */}
-        <div className="absolute inset-0 flex items-end justify-around px-4">
-          {/* Grid lines */}
-          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-            <div className="border-t border-gray-100 w-full"></div>
-            <div className="border-t border-gray-100 w-full"></div>
-            <div className="border-t border-gray-100 w-full"></div>
-            <div className="border-t border-gray-100 w-full"></div>
-          </div>
-
-          {/* Bars */}
-          {data.map((bar, i) => (
-            <div key={i} className="flex flex-col items-center relative z-10 w-1/6">
-              <motion.div
-                className="w-full rounded-t-sm"
-                style={{ backgroundColor: bar.color }}
-                initial={{ height: 0 }}
-                animate={{ height: isActive ? `${bar.value}%` : 0 }}
-                transition={{ duration: 0.8, delay: i * 0.15 }}
-              />
-              <div className="mt-2 text-center">
-                <div className="font-medium text-sm">{bar.value}%</div>
-                <div className="text-xs text-gray-500">{bar.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ flex: 1, width: "100%" }} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={`rg-${category}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={BLUE} stopOpacity="0.35" />
+            <stop offset="75%" stopColor={BLUE} stopOpacity="0.05" />
+            <stop offset="100%" stopColor={BLUE} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {[0.2, 0.4, 0.6, 0.8].map((t, i) => (
+          <line key={i} x1={padX} y1={padY + t*(H-padY*2)} x2={W-padX} y2={padY + t*(H-padY*2)}
+            stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
+        ))}
+        <path d={areaPath} fill={`url(#rg-${category})`} />
+        <path d={linePath} fill="none" stroke={BLUE} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 10px 0", fontSize: 9, color: TEXT }}>
+        {months.map((m, i) => i % 2 === 0 && <span key={i}>{m}</span>)}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "5px 10px 0", fontSize: 10 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 4, color: TEXT }}>
+          <span style={{ width: 20, height: 2.5, background: BLUE, display: "inline-block", borderRadius: 2 }} />
+          Revenue
+        </span>
+        <span style={{ color: "#16A34A", fontWeight: 700 }}>↑ {change} this period</span>
       </div>
     </div>
   )
 }
 
-// Standardized Horizontal Bar Chart with responsive dimensions
-export function StandardHorizontalBarChart({
-  category = "cafe",
-  isActive = true,
-}: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
+// ─── CUSTOMER SEGMENTS (Donut) ────────────────────────────────────
+const segmentData = {
+  cafe: [
+    { name: "Morning Regulars", pct: 38 },
+    { name: "Lunch Crowd", pct: 27 },
+    { name: "Afternoon", pct: 22 },
+    { name: "Weekend", pct: 13 },
+  ],
+  retail: [
+    { name: "Loyal Shoppers", pct: 32 },
+    { name: "Seasonal Buyers", pct: 28 },
+    { name: "Bargain Hunters", pct: 24 },
+    { name: "New Visitors", pct: 16 },
+  ],
+  restaurant: [
+    { name: "Dinner Regulars", pct: 35 },
+    { name: "Lunch Crowd", pct: 30 },
+    { name: "Weekend Diners", pct: 22 },
+    { name: "Special Events", pct: 13 },
+  ],
+  salon: [
+    { name: "Monthly Clients", pct: 42 },
+    { name: "Bi-Weekly", pct: 28 },
+    { name: "Occasional", pct: 20 },
+    { name: "New Clients", pct: 10 },
+  ],
+}
+const PIE_COLORS = [BLUE, BLUE_LIGHT, "#0EA5E9", "#BAE6FD"]
 
-  const horizontalBarData = {
-    cafe: [
-      { label: "Barista A", value: 85, color: colorScheme[0] },
-      { label: "Barista B", value: 65, color: colorScheme[1] },
-      { label: "Barista C", value: 45, color: colorScheme[2] },
-      { label: "Barista D", value: 30, color: colorScheme[3] },
-    ],
-    retail: [
-      { label: "Associate A", value: 75, color: colorScheme[0] },
-      { label: "Associate B", value: 60, color: colorScheme[1] },
-      { label: "Associate C", value: 80, color: colorScheme[2] },
-      { label: "Associate D", value: 45, color: colorScheme[3] },
-    ],
-    restaurant: [
-      { label: "Server A", value: 70, color: colorScheme[0] },
-      { label: "Server B", value: 85, color: colorScheme[1] },
-      { label: "Server C", value: 55, color: colorScheme[2] },
-      { label: "Server D", value: 65, color: colorScheme[3] },
-    ],
-    salon: [
-      { label: "Stylist A", value: 90, color: colorScheme[0] },
-      { label: "Stylist B", value: 75, color: colorScheme[1] },
-      { label: "Stylist C", value: 85, color: colorScheme[2] },
-      { label: "Stylist D", value: 60, color: colorScheme[3] },
-    ],
+export function CustomerSegmentChart({ category = "cafe" }: { category?: string }) {
+  const data = segmentData[category] || segmentData.cafe
+  const cx = 80, cy = 80, R = 62, r = 36
+  const toRad = (deg: number) => (deg * Math.PI) / 180
+  let angle = -90
+  const slices = data.map((d, i) => {
+    const sweep = (d.pct / 100) * 358
+    const start = angle
+    angle += sweep + 0.8
+    const mid = start + sweep / 2
+    const labelR = R + 14
+    return {
+      ...d,
+      color: PIE_COLORS[i % PIE_COLORS.length],
+      start, sweep, mid,
+      lx: cx + labelR * Math.cos(toRad(mid)),
+      ly: cy + labelR * Math.sin(toRad(mid)),
+      ox: cx + (R - 10) * Math.cos(toRad(mid)),
+      oy: cy + (R - 10) * Math.sin(toRad(mid)),
+    }
+  })
+  const arcPath = (start: number, sweep: number, outerR: number, innerR: number) => {
+    const s1 = { x: cx + outerR * Math.cos(toRad(start)), y: cy + outerR * Math.sin(toRad(start)) }
+    const e1 = { x: cx + outerR * Math.cos(toRad(start + sweep)), y: cy + outerR * Math.sin(toRad(start + sweep)) }
+    const s2 = { x: cx + innerR * Math.cos(toRad(start + sweep)), y: cy + innerR * Math.sin(toRad(start + sweep)) }
+    const e2 = { x: cx + innerR * Math.cos(toRad(start)), y: cy + innerR * Math.sin(toRad(start)) }
+    const large = sweep > 180 ? 1 : 0
+    return `M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 ${large} 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${innerR} ${innerR} 0 ${large} 0 ${e2.x} ${e2.y} Z`
   }
 
-  const data = horizontalBarData[category] || horizontalBarData.cafe
-
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 flex flex-col justify-center space-y-6 px-4">
-        {data.map((item, i) => (
-          <div key={i}>
-            <div className="flex justify-between mb-1">
-              <span className="text-sm font-medium">{item.label}</span>
-              <span className="text-sm font-medium">{item.value}%</span>
-            </div>
-            <div className="h-8 bg-gray-100 rounded-md overflow-hidden">
-              <motion.div
-                className="h-full"
-                style={{ backgroundColor: item.color }}
-                initial={{ width: 0 }}
-                animate={{ width: isActive ? `${item.value}%` : 0 }}
-                transition={{ duration: 0.8, delay: i * 0.15 }}
-              />
+    <div style={{ display: "flex", alignItems: "center", height: "100%", padding: "0 4px", gap: 8 }}>
+      <svg viewBox="0 0 160 160" style={{ width: 160, flexShrink: 0 }}>
+        {slices.map((s, i) => (
+          <path key={i} d={arcPath(s.start, s.sweep, R, r)}
+            fill={s.color} opacity={0.92} />
+        ))}
+        {/* Center hole */}
+        <circle cx={cx} cy={cy} r={r} fill="hsl(var(--card,#fff))" />
+        {/* Center text */}
+        <text x={cx} y={cy - 8} textAnchor="middle" fontSize="10" fill={TEXT}>Customers</text>
+        <text x={cx} y={cy + 6} textAnchor="middle" fontSize="18" fontWeight="800" fill="#0F172A">
+          {data.reduce((a, d) => a + d.pct, 0)}%
+        </text>
+        <text x={cx} y={cy + 19} textAnchor="middle" fontSize="9" fill={TEXT}>distributed</text>
+      </svg>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+        {data.map((d, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: PIE_COLORS[i], flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                <span style={{ fontSize: 11, color: "#0F172A", fontWeight: 500 }}>{d.name}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: PIE_COLORS[i] }}>{d.pct}%</span>
+              </div>
+              <div style={{ height: 5, background: "rgba(0,0,0,0.06)", borderRadius: 99 }}>
+                <div style={{ height: "100%", width: `${d.pct}%`, background: PIE_COLORS[i], borderRadius: 99, opacity: 0.85 }} />
+              </div>
             </div>
           </div>
         ))}
@@ -162,658 +171,545 @@ export function StandardHorizontalBarChart({
   )
 }
 
-// Heat Map Chart
-export function HeatMapChart({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
-  const baseColor = colorScheme[0]
+// ─── HOURLY BAR CHART (SVG) ───────────────────────────────────────
+const hourlyData = {
+  cafe:       [12, 45, 88, 72, 54, 61, 78, 65, 48, 55, 42, 30],
+  retail:     [22, 48, 65, 72, 68, 75, 80, 85, 78, 60, 40, 18],
+  restaurant: [10, 30, 85, 90, 55, 20, 18, 45, 88, 95, 80, 50],
+  salon:      [10, 35, 65, 80, 70, 60, 75, 85, 90, 70, 45, 20],
+}
+const hourLabels = {
+  cafe:       ["6a","7a","8a","9a","10a","11a","12p","1p","2p","3p","4p","5p"],
+  retail:     ["9a","10a","11a","12p","1p","2p","3p","4p","5p","6p","7p","8p"],
+  restaurant: ["10a","11a","12p","1p","2p","3p","4p","5p","6p","7p","8p","9p"],
+  salon:      ["9a","10a","11a","12p","1p","2p","3p","4p","5p","6p","7p","8p"],
+}
 
-  // Different data for each category
-  const heatMapData = {
-    cafe: [
-      ["6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm"],
-      ["Mon", [10, 25, 80, 70, 50, 85, 90, 70, 40, 30, 45, 60, 70, 50, 20]],
-      ["Tue", [15, 30, 75, 65, 45, 80, 85, 65, 35, 25, 40, 55, 65, 45, 15]],
-      ["Wed", [20, 35, 85, 75, 55, 90, 95, 75, 45, 35, 50, 65, 75, 55, 25]],
-      ["Thu", [15, 30, 80, 70, 50, 85, 90, 70, 40, 30, 45, 60, 70, 50, 20]],
-      ["Fri", [25, 40, 90, 80, 60, 95, 100, 80, 50, 40, 55, 70, 80, 60, 30]],
-      ["Sat", [40, 60, 95, 85, 70, 90, 85, 95, 80, 70, 75, 85, 90, 75, 45]],
-      ["Sun", [30, 50, 85, 75, 60, 80, 75, 85, 70, 60, 65, 75, 80, 65, 35]],
-    ],
-    retail: [
-      ["10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm"],
-      ["Mon", [20, 30, 45, 60, 55, 50, 65, 80, 70, 60, 40, 20]],
-      ["Tue", [15, 25, 40, 55, 50, 45, 60, 75, 65, 55, 35, 15]],
-      ["Wed", [25, 35, 50, 65, 60, 55, 70, 85, 75, 65, 45, 25]],
-      ["Thu", [20, 30, 45, 60, 55, 50, 65, 80, 70, 60, 40, 20]],
-      ["Fri", [30, 40, 55, 70, 65, 60, 75, 90, 80, 70, 50, 30]],
-      ["Sat", [50, 60, 75, 90, 85, 80, 95, 100, 90, 80, 60, 40]],
-      ["Sun", [40, 50, 65, 80, 75, 70, 85, 95, 85, 75, 55, 35]],
-    ],
-    restaurant: [
-      ["11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm"],
-      ["Mon", [10, 30, 60, 40, 20, 30, 70, 90, 80, 60, 30, 10]],
-      ["Tue", [15, 35, 65, 45, 25, 35, 75, 85, 75, 55, 25, 5]],
-      ["Wed", [20, 40, 70, 50, 30, 40, 80, 95, 85, 65, 35, 15]],
-      ["Thu", [25, 45, 75, 55, 35, 45, 85, 100, 90, 70, 40, 20]],
-      ["Fri", [30, 50, 80, 60, 40, 50, 90, 100, 95, 80, 60, 40]],
-      ["Sat", [35, 55, 85, 65, 45, 55, 95, 100, 100, 90, 70, 50]],
-      ["Sun", [25, 45, 75, 55, 35, 45, 85, 95, 90, 75, 50, 30]],
-    ],
-    salon: [
-      ["9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm"],
-      ["Mon", [30, 50, 70, 60, 80, 70, 90, 80, 60, 40, 20]],
-      ["Tue", [40, 60, 80, 70, 90, 80, 95, 85, 65, 45, 25]],
-      ["Wed", [20, 40, 60, 50, 70, 60, 80, 70, 50, 30, 10]],
-      ["Thu", [50, 70, 90, 80, 95, 85, 100, 90, 70, 50, 30]],
-      ["Fri", [60, 80, 95, 85, 100, 90, 100, 95, 80, 60, 40]],
-      ["Sat", [70, 90, 100, 90, 100, 95, 100, 100, 90, 70, 50]],
-      ["Sun", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], // Closed
-    ],
-  }
-
-  const data = heatMapData[category] || heatMapData.cafe
-  const hours = data[0]
-  const days = data.slice(1)
+export function HourlyBarChart({ category = "cafe" }: { category?: string }) {
+  const vals = hourlyData[category] || hourlyData.cafe
+  const labels = hourLabels[category] || hourLabels.cafe
+  const max = Math.max(...vals)
+  const W = 320, H = 120, barW = W / vals.length - 3
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 overflow-x-auto">
-        <div className="min-w-[600px]">
-          {/* Hours header */}
-          <div className="flex">
-            <div className="w-12 flex-shrink-0"></div>
-            {hours.map((hour, i) => (
-              <div key={i} className="flex-1 text-xs text-center text-gray-500 pb-1">
-                {hour}
-              </div>
-            ))}
-          </div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ flex: 1, width: "100%" }}>
+        {[0.25, 0.5, 0.75, 1].map((t, i) => (
+          <line key={i} x1="0" y1={H * (1-t) * 0.9} x2={W} y2={H * (1-t) * 0.9}
+            stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+        ))}
+        {vals.map((v, i) => {
+          const barH = (v / max) * (H * 0.85)
+          const x = i * (W / vals.length) + 1.5
+          const isPeak = v >= max * 0.78
+          return (
+            <rect key={i} x={x} y={H - barH} width={barW} height={barH} rx="3"
+              fill={isPeak ? BLUE : v >= max * 0.5 ? "#0EA5E9" : BLUE_LIGHT} opacity={0.85} />
+          )
+        })}
+      </svg>
+      <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 1px 0", fontSize: 9, color: TEXT }}>
+        {labels.map((l, i) => i % 2 === 0 && <span key={i}>{l}</span>)}
+      </div>
+      <div style={{ display: "flex", gap: 10, padding: "5px 0 0", fontSize: 10, color: TEXT }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <span style={{ width: 10, height: 10, borderRadius: 2, background: BLUE, display: "inline-block" }} /> Peak
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <span style={{ width: 10, height: 10, borderRadius: 2, background: BLUE_LIGHT, display: "inline-block" }} /> Off-peak
+        </span>
+      </div>
+    </div>
+  )
+}
 
-          {/* Days and heat cells */}
-          {days.map((day, dayIndex) => (
-            <div key={dayIndex} className="flex items-center">
-              <div className="w-12 text-xs font-medium pr-2 text-right">{day[0]}</div>
-              <div className="flex-1 flex">
-                {day[1].map((value, hourIndex) => (
-                  <motion.div
-                    key={hourIndex}
-                    className="flex-1 h-8 m-0.5 rounded"
-                    style={{
-                      backgroundColor: `rgba(${Number.parseInt(baseColor.slice(1, 3), 16)}, ${Number.parseInt(baseColor.slice(3, 5), 16)}, ${Number.parseInt(baseColor.slice(5, 7), 16)}, ${value / 100})`,
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.5, delay: dayIndex * 0.1 + hourIndex * 0.01 }}
-                  />
-                ))}
-              </div>
-            </div>
+// ─── HEATMAP ──────────────────────────────────────────────────────
+const heatValues = {
+  cafe: [
+    [2,5,8,7,5,4,6,5,4,4,3,2],
+    [2,4,7,6,4,5,6,5,4,4,3,2],
+    [2,4,8,7,5,5,7,6,5,5,3,2],
+    [2,5,8,7,5,5,7,6,5,6,4,2],
+    [3,6,9,8,6,6,8,7,5,6,4,3],
+    [4,5,7,8,9,8,9,8,7,8,6,5],
+    [3,4,6,7,8,7,8,7,6,6,5,3],
+  ],
+  retail: [
+    [1,2,4,5,6,6,7,7,6,4,2,1],
+    [1,2,4,5,5,6,6,7,5,3,2,1],
+    [1,3,5,6,6,7,7,8,6,4,3,1],
+    [2,3,5,6,6,7,8,8,6,4,3,2],
+    [3,4,6,7,7,8,9,9,8,6,4,2],
+    [4,6,7,8,8,9,9,9,9,7,5,3],
+    [3,5,6,7,7,8,8,8,7,5,4,2],
+  ],
+  restaurant: [
+    [1,3,7,8,5,2,2,3,7,8,6,2],
+    [1,3,7,8,4,2,2,3,8,8,6,2],
+    [1,4,8,9,5,3,3,4,8,9,7,3],
+    [2,4,8,9,5,3,4,5,9,9,8,4],
+    [2,5,9,9,6,4,6,7,9,9,9,5],
+    [3,5,8,8,6,5,8,9,9,9,9,6],
+    [3,5,9,9,6,4,6,8,9,9,8,5],
+  ],
+  salon: [
+    [1,2,5,7,6,5,6,7,8,6,4,1],
+    [1,3,5,6,5,4,5,6,7,5,3,1],
+    [1,3,6,8,7,5,6,7,8,6,4,1],
+    [2,4,7,8,7,5,7,8,9,7,5,2],
+    [3,5,8,9,8,6,7,9,9,8,6,3],
+    [4,6,9,9,9,8,9,9,9,9,7,4],
+    [2,4,5,7,7,6,7,7,8,6,5,2],
+  ],
+}
+const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+const heatHours = {
+  cafe:       ["6a","7a","8a","9a","10a","11a","12p","1p","2p","3p","4p","5p"],
+  retail:     ["9a","10a","11a","12p","1p","2p","3p","4p","5p","6p","7p","8p"],
+  restaurant: ["10a","11a","12p","1p","2p","3p","4p","5p","6p","7p","8p","9p"],
+  salon:      ["9a","10a","11a","12p","1p","2p","3p","4p","5p","6p","7p","8p"],
+}
+
+export function HeatMapChart({ category = "cafe" }: { category?: string }) {
+  const vals = heatValues[category] || heatValues.cafe
+  const hours = heatHours[category] || heatHours.cafe
+  const getColor = (v: number) => `rgba(2,132,199,${(0.07 + (v/9)*0.88).toFixed(2)})`
+
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", gap: 3, fontSize: 9, color: TEXT, overflowX: "auto" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `28px repeat(${hours.length}, 1fr)`, gap: 2 }}>
+        <div />
+        {hours.map(h => <div key={h} style={{ textAlign: "center" }}>{h}</div>)}
+      </div>
+      {days.map((day, di) => (
+        <div key={di} style={{ display: "grid", gridTemplateColumns: `28px repeat(${hours.length}, 1fr)`, gap: 2 }}>
+          <div style={{ display: "flex", alignItems: "center", fontWeight: 600 }}>{day}</div>
+          {vals[di].map((v, hi) => (
+            <div key={hi} style={{ height: 18, borderRadius: 3, background: getColor(v) }} />
           ))}
         </div>
+      ))}
+      <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 4 }}>
+        <span>Low</span>
+        {[0.07,0.25,0.45,0.65,0.88].map((o,i) => (
+          <div key={i} style={{ width: 14, height: 10, borderRadius: 2, background: `rgba(2,132,199,${o})` }} />
+        ))}
+        <span>High</span>
       </div>
     </div>
   )
 }
 
-// Location Map Chart
-export function LocationMapChart({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
+// ─── HORIZONTAL BAR ───────────────────────────────────────────────
+const hbarData = {
+  cafe: [
+    { name: "Sarah M.", value: 8200, pct: 100 },
+    { name: "James K.", value: 7400, pct: 90 },
+    { name: "Priya R.", value: 6800, pct: 83 },
+    { name: "Tom W.", value: 6200, pct: 76 },
+    { name: "Ana L.", value: 5900, pct: 72 },
+  ],
+  retail: [
+    { name: "Electronics", value: 28000, pct: 100 },
+    { name: "Apparel", value: 22000, pct: 79 },
+    { name: "Home Goods", value: 17000, pct: 61 },
+    { name: "Accessories", value: 11900, pct: 43 },
+  ],
+  restaurant: [
+    { name: "Dine-in", value: 31000, pct: 100 },
+    { name: "Takeout", value: 14000, pct: 45 },
+    { name: "Delivery", value: 7300, pct: 24 },
+  ],
+  salon: [
+    { name: "Maya J.", value: 9100, pct: 100 },
+    { name: "Chris B.", value: 8400, pct: 92 },
+    { name: "Nina P.", value: 7600, pct: 84 },
+    { name: "Sam T.", value: 6100, pct: 67 },
+  ],
+}
 
-  // Different data for each category
-  const locationData = {
-    cafe: [
-      { id: 1, name: "Downtown", x: 30, y: 40, value: 85, radius: 15 },
-      { id: 2, name: "Westside", x: 15, y: 60, value: 65, radius: 12 },
-      { id: 3, name: "Northside", x: 50, y: 20, value: 75, radius: 13 },
-      { id: 4, name: "Eastside", x: 70, y: 50, value: 55, radius: 10 },
-      { id: 5, name: "Southside", x: 40, y: 75, value: 45, radius: 9 },
-    ],
-    retail: [
-      { id: 1, name: "Mall Location", x: 50, y: 50, value: 90, radius: 16 },
-      { id: 2, name: "Downtown", x: 30, y: 30, value: 75, radius: 13 },
-      { id: 3, name: "Outlet Center", x: 70, y: 70, value: 80, radius: 14 },
-      { id: 4, name: "Strip Mall", x: 20, y: 60, value: 60, radius: 11 },
-      { id: 5, name: "Airport", x: 80, y: 40, value: 50, radius: 10 },
-    ],
-    restaurant: [
-      { id: 1, name: "Downtown", x: 40, y: 30, value: 85, radius: 15 },
-      { id: 2, name: "Waterfront", x: 60, y: 20, value: 90, radius: 16 },
-      { id: 3, name: "University", x: 25, y: 50, value: 70, radius: 13 },
-      { id: 4, name: "Suburbs", x: 75, y: 60, value: 65, radius: 12 },
-      { id: 5, name: "Mall", x: 50, y: 75, value: 60, radius: 11 },
-    ],
-    salon: [
-      { id: 1, name: "Downtown", x: 35, y: 45, value: 90, radius: 16 },
-      { id: 2, name: "Uptown", x: 65, y: 35, value: 85, radius: 15 },
-      { id: 3, name: "West End", x: 20, y: 65, value: 75, radius: 13 },
-      { id: 4, name: "East Side", x: 80, y: 55, value: 70, radius: 12 },
-    ],
-  }
-
-  const locations = locationData[category] || locationData.cafe
-
+export function StandardHorizontalBarChart({ category = "cafe" }: { category?: string }) {
+  const data = hbarData[category] || hbarData.cafe
+  const fmt = (v: number) => v >= 1000 ? `$${(v/1000).toFixed(0)}k` : `$${v}`
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 relative">
-        {/* Map background */}
-        <div className="absolute inset-0 bg-gray-50 rounded-lg">
-          {/* Grid lines */}
-          <svg width="100%" height="100%" viewBox="0 0 100 100" className="opacity-30">
-            <defs>
-              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="gray" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100" height="100" fill="url(#grid)" />
-          </svg>
-
-          {/* Location bubbles */}
-          <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0">
-            {locations.map((location, i) => (
-              <g key={i}>
-                <motion.circle
-                  cx={location.x}
-                  cy={location.y}
-                  r={location.radius}
-                  fill={`${colorScheme[i % colorScheme.length]}80`}
-                  initial={{ r: 0 }}
-                  animate={{ r: isActive ? location.radius : 0 }}
-                  transition={{ duration: 0.8, delay: i * 0.2 }}
-                />
-                <motion.circle
-                  cx={location.x}
-                  cy={location.y}
-                  r={3}
-                  fill={colorScheme[i % colorScheme.length]}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.2 + 0.3 }}
-                />
-                <motion.text
-                  x={location.x}
-                  y={location.y + location.radius + 5}
-                  textAnchor="middle"
-                  fontSize="3"
-                  fontWeight="bold"
-                  fill="#333"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.2 + 0.5 }}
-                >
-                  {location.name}
-                </motion.text>
-                <motion.text
-                  x={location.x}
-                  y={location.y}
-                  textAnchor="middle"
-                  fontSize="4"
-                  fontWeight="bold"
-                  fill="#fff"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.2 + 0.5 }}
-                >
-                  {location.value}%
-                </motion.text>
-              </g>
-            ))}
-          </svg>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", gap: 10, padding: "4px 8px" }}>
+      {data.map((d, i) => (
+        <div key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 11 }}>
+            <span style={{ color: "#0F172A", fontWeight: 500 }}>{d.name}</span>
+            <span style={{ fontWeight: 700, color: BLUE }}>{fmt(d.value)}</span>
+          </div>
+          <div style={{ height: 8, background: BLUE_MED, borderRadius: 99 }}>
+            <div style={{ height: "100%", width: `${d.pct}%`, background: `linear-gradient(90deg, ${BLUE}, ${BLUE_LIGHT})`, borderRadius: 99 }} />
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   )
 }
 
-// Bubble Chart
-export function BubbleChart({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
+// ─── STANDARD BAR CHART ───────────────────────────────────────────
+const barData = {
+  cafe: [
+    { label: "Coffee", pct: 65 },
+    { label: "Pastries", pct: 45 },
+    { label: "Sandwiches", pct: 30 },
+    { label: "Beverages", pct: 25 },
+    { label: "Extras", pct: 10 },
+  ],
+  retail: [
+    { label: "Electronics", pct: 70 },
+    { label: "Home", pct: 55 },
+    { label: "Apparel", pct: 40 },
+    { label: "Accessories", pct: 30 },
+  ],
+  restaurant: [
+    { label: "Entrees", pct: 55 },
+    { label: "Beverages", pct: 45 },
+    { label: "Appetizers", pct: 35 },
+    { label: "Desserts", pct: 25 },
+  ],
+  salon: [
+    { label: "Color", pct: 75 },
+    { label: "Haircuts", pct: 60 },
+    { label: "Styling", pct: 40 },
+    { label: "Products", pct: 25 },
+  ],
+}
 
-  // Different data for each category
-  const bubbleData = {
-    cafe: [
-      { name: "Espresso", x: 30, y: 70, size: 20, color: colorScheme[0] },
-      { name: "Latte", x: 60, y: 80, size: 25, color: colorScheme[1] },
-      { name: "Cappuccino", x: 45, y: 60, size: 18, color: colorScheme[2] },
-      { name: "Cold Brew", x: 75, y: 40, size: 22, color: colorScheme[3] },
-      { name: "Pastries", x: 25, y: 30, size: 15, color: colorScheme[0] },
-      { name: "Sandwiches", x: 55, y: 20, size: 17, color: colorScheme[1] },
-    ],
-    retail: [
-      { name: "T-Shirts", x: 20, y: 60, size: 18, color: colorScheme[0] },
-      { name: "Jeans", x: 40, y: 75, size: 22, color: colorScheme[1] },
-      { name: "Shoes", x: 65, y: 85, size: 25, color: colorScheme[2] },
-      { name: "Accessories", x: 30, y: 30, size: 15, color: colorScheme[3] },
-      { name: "Outerwear", x: 70, y: 40, size: 20, color: colorScheme[0] },
-      { name: "Dresses", x: 50, y: 20, size: 17, color: colorScheme[1] },
-    ],
-    restaurant: [
-      { name: "Steaks", x: 70, y: 80, size: 25, color: colorScheme[0] },
-      { name: "Pasta", x: 40, y: 65, size: 20, color: colorScheme[1] },
-      { name: "Salads", x: 25, y: 40, size: 15, color: colorScheme[2] },
-      { name: "Desserts", x: 55, y: 30, size: 18, color: colorScheme[3] },
-      { name: "Appetizers", x: 30, y: 70, size: 17, color: colorScheme[0] },
-      { name: "Seafood", x: 60, y: 50, size: 22, color: colorScheme[1] },
-    ],
-    salon: [
-      { name: "Haircuts", x: 30, y: 60, size: 20, color: colorScheme[0] },
-      { name: "Color", x: 60, y: 75, size: 25, color: colorScheme[1] },
-      { name: "Styling", x: 45, y: 40, size: 18, color: colorScheme[2] },
-      { name: "Treatments", x: 25, y: 30, size: 15, color: colorScheme[3] },
-      { name: "Extensions", x: 70, y: 50, size: 17, color: colorScheme[0] },
-      { name: "Products", x: 50, y: 20, size: 12, color: colorScheme[1] },
-    ],
-  }
-
-  const bubbles = bubbleData[category] || bubbleData.cafe
-
+export function StandardBarChart({ category = "cafe" }: { category?: string }) {
+  const data = barData[category] || barData.cafe
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 relative">
-        {/* Chart background */}
-        <div className="absolute inset-0">
-          <svg width="100%" height="100%" viewBox="0 0 100 100">
-            {/* X and Y axes */}
-            <line x1="10" y1="90" x2="90" y2="90" stroke="#ccc" strokeWidth="0.5" />
-            <line x1="10" y1="10" x2="10" y2="90" stroke="#ccc" strokeWidth="0.5" />
-
-            {/* Axis labels */}
-            <text x="50" y="98" textAnchor="middle" fontSize="3" fill="#666">
-              {category === "cafe" || category === "restaurant" ? "Popularity" : "Sales Volume"}
-            </text>
-            <text x="3" y="50" textAnchor="middle" fontSize="3" fill="#666" transform="rotate(-90, 3, 50)">
-              {category === "cafe" || category === "restaurant" ? "Profit Margin" : "Profit Margin"}
-            </text>
-
-            {/* Bubbles */}
-            {bubbles.map((bubble, i) => (
-              <g key={i}>
-                <motion.circle
-                  cx={bubble.x}
-                  cy={bubble.y}
-                  r={bubble.size / 3}
-                  fill={`${bubble.color}80`}
-                  initial={{ r: 0 }}
-                  animate={{ r: isActive ? bubble.size / 3 : 0 }}
-                  transition={{ duration: 0.8, delay: i * 0.15 }}
-                />
-                <motion.text
-                  x={bubble.x}
-                  y={bubble.y}
-                  textAnchor="middle"
-                  fontSize="2.5"
-                  fontWeight="bold"
-                  fill="#333"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.15 + 0.3 }}
-                >
-                  {bubble.name}
-                </motion.text>
-              </g>
-            ))}
-          </svg>
-        </div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", padding: "8px 4px 4px" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-end", gap: 8, justifyContent: "center" }}>
+        {data.map((d, i) => (
+          <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, height: "100%" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: BLUE }}>{d.pct}%</span>
+            <div style={{ width: "100%", flex: 1, display: "flex", alignItems: "flex-end" }}>
+              <div style={{
+                width: "100%", height: `${d.pct}%`,
+                background: `linear-gradient(180deg, ${BLUE} 0%, ${BLUE_LIGHT} 100%)`,
+                borderRadius: "6px 6px 0 0", minHeight: 8, opacity: 0.85,
+              }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 8, justifyContent: "center", paddingTop: 6 }}>
+        {data.map((d, i) => (
+          <span key={i} style={{ flex: 1, fontSize: 9, color: TEXT, textAlign: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {d.label}
+          </span>
+        ))}
       </div>
     </div>
   )
 }
 
-// Radar Chart
-export function RadarChart({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
+// ─── BUBBLE CHART (SVG scatter) ───────────────────────────────────
+const bubbleData = {
+  cafe: [
+    { name: "Espresso", x: 88, y: 72, r: 18 },
+    { name: "Latte", x: 92, y: 58, r: 26 },
+    { name: "Croissant", x: 74, y: 65, r: 14 },
+    { name: "Sandwich", x: 56, y: 48, r: 11 },
+    { name: "Smoothie", x: 44, y: 62, r: 9 },
+    { name: "Cold Brew", x: 68, y: 70, r: 16 },
+  ],
+  retail: [
+    { name: "Laptops", x: 72, y: 35, r: 28 },
+    { name: "Phones", x: 85, y: 28, r: 24 },
+    { name: "Jackets", x: 65, y: 55, r: 18 },
+    { name: "Bags", x: 58, y: 62, r: 15 },
+    { name: "Watches", x: 45, y: 70, r: 14 },
+    { name: "Shoes", x: 78, y: 48, r: 20 },
+  ],
+  restaurant: [
+    { name: "Steak", x: 78, y: 42, r: 22 },
+    { name: "Pasta", x: 85, y: 68, r: 20 },
+    { name: "Salad", x: 62, y: 74, r: 12 },
+    { name: "Burger", x: 90, y: 55, r: 24 },
+    { name: "Fish", x: 55, y: 48, r: 15 },
+    { name: "Wine", x: 70, y: 65, r: 18 },
+  ],
+  salon: [
+    { name: "Cut & Style", x: 92, y: 68, r: 24 },
+    { name: "Color", x: 78, y: 72, r: 28 },
+    { name: "Highlights", x: 65, y: 65, r: 18 },
+    { name: "Treatment", x: 52, y: 78, r: 13 },
+    { name: "Blowout", x: 70, y: 74, r: 15 },
+  ],
+}
 
-  // Different data for each category
-  const radarData = {
-    cafe: [
-      { axis: "Quality", value: 85 },
-      { axis: "Service", value: 75 },
-      { axis: "Ambiance", value: 80 },
-      { axis: "Price", value: 65 },
-      { axis: "Location", value: 90 },
-      { axis: "Selection", value: 70 },
-    ],
-    retail: [
-      { axis: "Selection", value: 90 },
-      { axis: "Price", value: 70 },
-      { axis: "Quality", value: 85 },
-      { axis: "Service", value: 75 },
-      { axis: "Location", value: 80 },
-      { axis: "Experience", value: 85 },
-    ],
-    restaurant: [
-      { axis: "Food Quality", value: 90 },
-      { axis: "Service", value: 80 },
-      { axis: "Ambiance", value: 85 },
-      { axis: "Price", value: 70 },
-      { axis: "Menu Variety", value: 75 },
-      { axis: "Cleanliness", value: 95 },
-    ],
-    salon: [
-      { axis: "Skill", value: 95 },
-      { axis: "Service", value: 90 },
-      { axis: "Price", value: 75 },
-      { axis: "Ambiance", value: 85 },
-      { axis: "Products", value: 80 },
-      { axis: "Booking Ease", value: 70 },
-    ],
-  }
+export function BubbleChart({ category = "cafe" }: { category?: string }) {
+  const data = bubbleData[category] || bubbleData.cafe
+  const W = 300, H = 160
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ flex: 1, width: "100%" }}>
+        <line x1="30" y1="10" x2="30" y2={H-20} stroke="rgba(0,0,0,0.07)" strokeWidth="1" />
+        <line x1="30" y1={H-20} x2={W-10} y2={H-20} stroke="rgba(0,0,0,0.07)" strokeWidth="1" />
+        <text x="15" y={H/2} fontSize="8" fill={TEXT} textAnchor="middle" transform={`rotate(-90,15,${H/2})`}>Margin %</text>
+        <text x={W/2} y={H-5} fontSize="8" fill={TEXT} textAnchor="middle">Popularity %</text>
+        {data.map((d, i) => {
+          const cx = 30 + ((d.x - 30) / 70) * (W - 45)
+          const cy = (H-20) - ((d.y - 20) / 70) * (H - 40)
+          return (
+            <g key={i}>
+              <circle cx={cx} cy={cy} r={d.r} fill={BLUE} fillOpacity={0.15} stroke={BLUE} strokeWidth={1.5} />
+              {d.r > 15 && <text x={cx} y={cy + 3} fontSize="8" fill={BLUE} textAnchor="middle" fontWeight="600">{d.name}</text>}
+            </g>
+          )
+        })}
+      </svg>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, padding: "4px 4px 0", fontSize: 9, color: TEXT }}>
+        {data.filter(d => d.r <= 15).map((d, i) => (
+          <span key={i} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: BLUE, display: "inline-block", opacity: 0.6 }} />
+            {d.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
+// ─── RADAR CHART (SVG) ────────────────────────────────────────────
+const radarData = {
+  cafe: [
+    { label: "Quality", you: 92, avg: 75 },
+    { label: "Speed", you: 78, avg: 72 },
+    { label: "Ambiance", you: 85, avg: 70 },
+    { label: "Value", you: 72, avg: 68 },
+    { label: "Staff", you: 88, avg: 74 },
+    { label: "Clean", you: 94, avg: 78 },
+  ],
+  retail: [
+    { label: "Range", you: 82, avg: 72 },
+    { label: "Pricing", you: 75, avg: 70 },
+    { label: "Staff", you: 88, avg: 74 },
+    { label: "Layout", you: 78, avg: 68 },
+    { label: "Checkout", you: 85, avg: 72 },
+    { label: "Returns", you: 80, avg: 66 },
+  ],
+  restaurant: [
+    { label: "Food", you: 90, avg: 76 },
+    { label: "Service", you: 85, avg: 72 },
+    { label: "Ambiance", you: 82, avg: 70 },
+    { label: "Value", you: 74, avg: 68 },
+    { label: "Wait", you: 72, avg: 65 },
+    { label: "Clean", you: 92, avg: 78 },
+  ],
+  salon: [
+    { label: "Skill", you: 94, avg: 78 },
+    { label: "Timing", you: 82, avg: 72 },
+    { label: "Ambiance", you: 88, avg: 74 },
+    { label: "Value", you: 76, avg: 70 },
+    { label: "Products", you: 80, avg: 68 },
+    { label: "Booking", you: 85, avg: 72 },
+  ],
+}
+
+export function RadarChart({ category = "cafe" }: { category?: string }) {
   const data = radarData[category] || radarData.cafe
-  const centerX = 50
-  const centerY = 50
-  const radius = 40
-
-  // Calculate points on the radar
-  const angleStep = (Math.PI * 2) / data.length
-  const points = data.map((d, i) => {
-    const angle = i * angleStep - Math.PI / 2 // Start from top
-    const value = d.value / 100
-    return {
-      x: centerX + radius * value * Math.cos(angle),
-      y: centerY + radius * value * Math.sin(angle),
-      label: d.axis,
-      labelX: centerX + (radius + 10) * Math.cos(angle),
-      labelY: centerY + (radius + 10) * Math.sin(angle),
-      value: d.value,
-    }
+  const n = data.length
+  const cx = 110, cy = 100, maxR = 80
+  const toRad = (deg: number) => (deg * Math.PI) / 180
+  const getPoint = (i: number, pct: number) => ({
+    x: cx + maxR * pct * Math.cos(toRad(-90 + (360 / n) * i)),
+    y: cy + maxR * pct * Math.sin(toRad(-90 + (360 / n) * i)),
   })
-
-  // Create the polygon path
-  const polygonPath = points.map((p) => `${p.x},${p.y}`).join(" ")
+  const rings = [0.25, 0.5, 0.75, 1]
+  const ringPath = (pct: number) => {
+    const pts = Array.from({ length: n }, (_, i) => getPoint(i, pct))
+    return pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z"
+  }
+  const youPath = data.map((d, i) => getPoint(i, d.you / 100))
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z"
+  const avgPath = data.map((d, i) => getPoint(i, d.avg / 100))
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z"
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 relative">
-        <div className="absolute inset-0">
-          <svg width="100%" height="100%" viewBox="0 0 100 100">
-            {/* Background circles */}
-            {[0.2, 0.4, 0.6, 0.8, 1].map((level, i) => (
-              <motion.circle
-                key={i}
-                cx={centerX}
-                cy={centerY}
-                r={radius * level}
-                fill="none"
-                stroke="#e5e5e5"
-                strokeWidth="0.5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              />
-            ))}
-
-            {/* Axis lines */}
-            {points.map((point, i) => (
-              <motion.line
-                key={i}
-                x1={centerX}
-                y1={centerY}
-                x2={centerX + radius * Math.cos(i * angleStep - Math.PI / 2)}
-                y2={centerY + radius * Math.sin(i * angleStep - Math.PI / 2)}
-                stroke="#e5e5e5"
-                strokeWidth="0.5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
-              />
-            ))}
-
-            {/* Data polygon */}
-            <motion.polygon
-              points={polygonPath}
-              fill={`${colorScheme[0]}40`}
-              stroke={colorScheme[0]}
-              strokeWidth="1"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: isActive ? 1 : 0, scale: isActive ? 1 : 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              style={{ transformOrigin: "center" }}
-            />
-
-            {/* Data points */}
-            {points.map((point, i) => (
-              <motion.circle
-                key={i}
-                cx={point.x}
-                cy={point.y}
-                r="1.5"
-                fill={colorScheme[0]}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }}
-              />
-            ))}
-
-            {/* Axis labels */}
-            {points.map((point, i) => (
-              <motion.text
-                key={i}
-                x={point.labelX}
-                y={point.labelY}
-                textAnchor={point.labelX < centerX - 5 ? "end" : point.labelX > centerX + 5 ? "start" : "middle"}
-                dominantBaseline={
-                  point.labelY < centerY - 5 ? "auto" : point.labelY > centerY + 5 ? "hanging" : "middle"
-                }
-                fontSize="3"
-                fontWeight="bold"
-                fill="#333"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isActive ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: 1.5 + i * 0.1 }}
-              >
-                {point.label}
-              </motion.text>
-            ))}
-          </svg>
-        </div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <svg viewBox="0 0 220 200" style={{ flex: 1, width: "100%" }}>
+        {rings.map((r, i) => (
+          <path key={i} d={ringPath(r)} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+        ))}
+        {data.map((_, i) => {
+          const p = getPoint(i, 1)
+          return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+        })}
+        <path d={avgPath} fill="rgba(203,213,225,0.3)" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4 3" />
+        <path d={youPath} fill={`rgba(2,132,199,0.15)`} stroke={BLUE} strokeWidth="2" />
+        {data.map((d, i) => {
+          const p = getPoint(i, d.you / 100)
+          return <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={BLUE} stroke="white" strokeWidth="1.5" />
+        })}
+        {data.map((d, i) => {
+          const p = getPoint(i, 1.18)
+          return <text key={i} x={p.x} y={p.y} fontSize="9" fill={TEXT} textAnchor="middle" dominantBaseline="middle">{d.label}</text>
+        })}
+      </svg>
+      <div style={{ display: "flex", gap: 14, padding: "0 8px 4px", fontSize: 10 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 4, color: TEXT }}>
+          <span style={{ width: 16, height: 2, background: BLUE, display: "inline-block" }} /> You
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 4, color: TEXT }}>
+          <span style={{ width: 16, height: 2, background: "#CBD5E1", display: "inline-block", borderTop: "2px dashed #CBD5E1" }} /> Industry avg
+        </span>
       </div>
     </div>
   )
 }
 
-// Calendar Heatmap
-export function CalendarHeatmap({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
-  const baseColor = colorScheme[0]
-
-  // Generate calendar data
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  const weeks = [1, 2, 3, 4]
-
-  // Different patterns for each category
-  const patterns = {
-    cafe: [
-      [30, 40, 45, 50], // Jan
-      [35, 45, 50, 55], // Feb
-      [40, 50, 55, 60], // Mar
-      [45, 55, 60, 65], // Apr
-      [50, 60, 65, 70], // May
-      [60, 70, 75, 80], // Jun
-      [70, 80, 85, 90], // Jul
-      [75, 85, 90, 95], // Aug
-      [65, 75, 80, 85], // Sep
-      [55, 65, 70, 75], // Oct
-      [45, 55, 60, 65], // Nov
-      [40, 50, 55, 60], // Dec
-    ],
-    retail: [
-      [50, 45, 40, 60], // Jan
-      [40, 35, 30, 45], // Feb
-      [35, 30, 25, 40], // Mar
-      [40, 35, 30, 45], // Apr
-      [45, 40, 35, 50], // May
-      [50, 45, 40, 55], // Jun
-      [55, 50, 45, 60], // Jul
-      [60, 55, 50, 65], // Aug
-      [70, 65, 60, 75], // Sep
-      [80, 75, 70, 85], // Oct
-      [95, 90, 85, 100], // Nov
-      [90, 85, 80, 95], // Dec
-    ],
-    restaurant: [
-      [60, 65, 70, 75], // Jan
-      [65, 70, 75, 80], // Feb
-      [70, 75, 80, 85], // Mar
-      [75, 80, 85, 90], // Apr
-      [80, 85, 90, 95], // May
-      [75, 80, 85, 90], // Jun
-      [70, 75, 80, 85], // Jul
-      [75, 80, 85, 90], // Aug
-      [80, 85, 90, 95], // Sep
-      [85, 90, 95, 100], // Oct
-      [80, 85, 90, 95], // Nov
-      [85, 90, 95, 100], // Dec
-    ],
-    salon: [
-      [40, 60, 50, 70], // Jan
-      [45, 65, 55, 75], // Feb
-      [50, 70, 60, 80], // Mar
-      [55, 75, 65, 85], // Apr
-      [60, 80, 70, 90], // May
-      [65, 85, 75, 95], // Jun
-      [60, 80, 70, 90], // Jul
-      [55, 75, 65, 85], // Aug
-      [60, 80, 70, 90], // Sep
-      [65, 85, 75, 95], // Oct
-      [70, 90, 80, 100], // Nov
-      [65, 85, 75, 95], // Dec
-    ],
+// ─── CALENDAR HEATMAP ─────────────────────────────────────────────
+export function CalendarHeatmap({ category = "cafe" }: { category?: string }) {
+  const months = ["Sep","Oct","Nov","Dec","Jan","Feb"]
+  const weeks = 24
+  const seed = { cafe: 1.2, retail: 2.4, restaurant: 0.8, salon: 1.8 }[category] || 1
+  const getValue = (w: number, d: number) => {
+    const v = Math.abs(Math.sin(w * 0.5 + d * 1.3 + seed)) * 0.7 + (w / weeks) * 0.3
+    return Math.min(1, v)
   }
-
-  const data = patterns[category] || patterns.cafe
-
+  const getColor = (v: number) => {
+    if (v < 0.15) return "rgba(2,132,199,0.06)"
+    if (v < 0.35) return "rgba(2,132,199,0.2)"
+    if (v < 0.55) return "rgba(2,132,199,0.4)"
+    if (v < 0.75) return "rgba(2,132,199,0.62)"
+    return "rgba(2,132,199,0.88)"
+  }
+  const dLabels = ["M","","W","","F","","S"]
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 overflow-x-auto">
-        <div className="min-w-[600px]">
-          <div className="flex">
-            <div className="w-12 flex-shrink-0"></div>
-            {months.map((month, i) => (
-              <div key={i} className="flex-1 text-xs text-center text-gray-500 pb-1">
-                {month}
-              </div>
-            ))}
-          </div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", fontSize: 9, color: TEXT }}>
+      <div style={{ display: "flex", marginBottom: 4, paddingLeft: 14 }}>
+        {months.map((m, i) => (
+          <div key={i} style={{ flex: 1, textAlign: "center" }}>{m}</div>
+        ))}
+      </div>
+      <div style={{ display: "flex", flex: 1, gap: 2 }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-around", paddingRight: 2 }}>
+          {dLabels.map((d, i) => <span key={i}>{d}</span>)}
+        </div>
+        <div style={{ flex: 1, display: "grid", gridTemplateRows: "repeat(7, 1fr)", gridAutoFlow: "column", gridTemplateColumns: `repeat(${weeks}, 1fr)`, gap: 2 }}>
+          {Array.from({ length: weeks * 7 }, (_, idx) => {
+            const w = Math.floor(idx / 7)
+            const d = idx % 7
+            const v = getValue(w, d)
+            return <div key={idx} style={{ borderRadius: 2, background: getColor(v) }} />
+          })}
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 6 }}>
+        <span>Less</span>
+        {[0.06, 0.2, 0.4, 0.62, 0.88].map((o, i) => (
+          <div key={i} style={{ width: 12, height: 12, borderRadius: 2, background: `rgba(2,132,199,${o})` }} />
+        ))}
+        <span>More</span>
+      </div>
+    </div>
+  )
+}
 
-          {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="flex items-center">
-              <div className="w-12 text-xs font-medium pr-2 text-right">Week {week}</div>
-              <div className="flex-1 flex">
-                {months.map((_, monthIndex) => (
-                  <motion.div
-                    key={monthIndex}
-                    className="flex-1 h-8 m-0.5 rounded"
-                    style={{
-                      backgroundColor: `rgba(${Number.parseInt(baseColor.slice(1, 3), 16)}, ${Number.parseInt(baseColor.slice(3, 5), 16)}, ${Number.parseInt(baseColor.slice(5, 7), 16)}, ${data[monthIndex][weekIndex] / 100})`,
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.5, delay: weekIndex * 0.1 + monthIndex * 0.02 }}
-                  />
-                ))}
-              </div>
+// ─── LOCATION MAP ─────────────────────────────────────────────────
+const locationData = {
+  cafe: [
+    { name: "Downtown Café", revenue: "$9.8k", change: "+18%", pct: 40 },
+    { name: "Midtown Branch", revenue: "$8.2k", change: "+12%", pct: 33 },
+    { name: "Airport Kiosk", revenue: "$6.5k", change: "+9%", pct: 27 },
+  ],
+  retail: [
+    { name: "Main St. Store", revenue: "$32k", change: "+14%", pct: 41 },
+    { name: "Mall Location", revenue: "$28k", change: "+10%", pct: 35 },
+    { name: "Outlet Store", revenue: "$18.9k", change: "+6%", pct: 24 },
+  ],
+  restaurant: [
+    { name: "Downtown", revenue: "$24k", change: "+20%", pct: 46 },
+    { name: "Westside", revenue: "$18.5k", change: "+15%", pct: 35 },
+    { name: "Uptown", revenue: "$9.8k", change: "+8%", pct: 19 },
+  ],
+  salon: [
+    { name: "Main Studio", revenue: "$18.5k", change: "+15%", pct: 59 },
+    { name: "Eastside Branch", revenue: "$12.7k", change: "+10%", pct: 41 },
+  ],
+}
+
+export function LocationMapChart({ category = "cafe" }: { category?: string }) {
+  const data = locationData[category] || locationData.cafe
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", gap: 12, padding: "4px 8px" }}>
+      {data.map((loc, i) => (
+        <div key={i}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: BLUE, flexShrink: 0 }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "#0F172A" }}>{loc.name}</span>
             </div>
-          ))}
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ fontSize: 11, color: "#16A34A", fontWeight: 600 }}>{loc.change}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: BLUE }}>{loc.revenue}</span>
+            </div>
+          </div>
+          <div style={{ height: 8, background: BLUE_MED, borderRadius: 99 }}>
+            <div style={{ height: "100%", width: `${loc.pct}%`, background: `linear-gradient(90deg, ${BLUE}, ${BLUE_LIGHT})`, borderRadius: 99 }} />
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   )
 }
 
-// Funnel Chart
-export function FunnelChart({ category = "cafe", isActive = true }: { category?: string; isActive?: boolean }) {
-  const colorScheme = categoryColors[category] || categoryColors.cafe
+// ─── FUNNEL CHART ─────────────────────────────────────────────────
+const funnelData = {
+  cafe: [
+    { stage: "Walk-bys", count: "1,200", pct: 100 },
+    { stage: "Enter Store", count: "840", pct: 70 },
+    { stage: "Browse Menu", count: "680", pct: 57 },
+    { stage: "Order", count: "560", pct: 47 },
+    { stage: "Return Visit", count: "310", pct: 26 },
+  ],
+  retail: [
+    { stage: "Site Visits", count: "8,400", pct: 100 },
+    { stage: "Product Views", count: "5,200", pct: 62 },
+    { stage: "Add to Cart", count: "2,100", pct: 25 },
+    { stage: "Checkout", count: "1,400", pct: 17 },
+    { stage: "Repeat Buy", count: "640", pct: 8 },
+  ],
+  restaurant: [
+    { stage: "Reservations", count: "920", pct: 100 },
+    { stage: "Confirmed", count: "810", pct: 88 },
+    { stage: "Seated", count: "760", pct: 83 },
+    { stage: "Ordered", count: "740", pct: 80 },
+    { stage: "Returned", count: "420", pct: 46 },
+  ],
+  salon: [
+    { stage: "Inquiries", count: "640", pct: 100 },
+    { stage: "Booked", count: "480", pct: 75 },
+    { stage: "Attended", count: "440", pct: 69 },
+    { stage: "Bought Product", count: "210", pct: 33 },
+    { stage: "Rebooked", count: "310", pct: 48 },
+  ],
+}
 
-  // Different data for each category
-  const funnelData = {
-    cafe: [
-      { stage: "Awareness", value: 100, color: colorScheme[0] },
-      { stage: "Interest", value: 70, color: colorScheme[1] },
-      { stage: "Visit", value: 50, color: colorScheme[2] },
-      { stage: "Purchase", value: 30, color: colorScheme[3] },
-      { stage: "Return Visit", value: 15, color: colorScheme[0] },
-    ],
-    retail: [
-      { stage: "Website Visit", value: 100, color: colorScheme[0] },
-      { stage: "Product View", value: 65, color: colorScheme[1] },
-      { stage: "Add to Cart", value: 40, color: colorScheme[2] },
-      { stage: "Purchase", value: 25, color: colorScheme[3] },
-      { stage: "Repeat Purchase", value: 10, color: colorScheme[0] },
-    ],
-    restaurant: [
-      { stage: "Reservation", value: 100, color: colorScheme[0] },
-      { stage: "Arrival", value: 85, color: colorScheme[1] },
-      { stage: "Ordering", value: 80, color: colorScheme[2] },
-      { stage: "Dessert/Drinks", value: 50, color: colorScheme[3] },
-      { stage: "Return Visit", value: 30, color: colorScheme[0] },
-    ],
-    salon: [
-      { stage: "Booking", value: 100, color: colorScheme[0] },
-      { stage: "Arrival", value: 90, color: colorScheme[1] },
-      { stage: "Service", value: 85, color: colorScheme[2] },
-      { stage: "Product Purchase", value: 40, color: colorScheme[3] },
-      { stage: "Rebooking", value: 60, color: colorScheme[0] },
-    ],
-  }
-
+export function FunnelChart({ category = "cafe" }: { category?: string }) {
   const data = funnelData[category] || funnelData.cafe
-
-  // Calculate heights and positions
-  const totalHeight = 80 // Percentage of SVG height
-  const startY = 10
-  const maxWidth = 80 // Percentage of SVG width
-  const minWidth = 30 // Minimum width for the smallest stage
-
-  const stages = data.map((item, i) => {
-    const heightPercentage = totalHeight / data.length
-    const widthPercentage = maxWidth - ((maxWidth - minWidth) * i) / (data.length - 1)
-    const y = startY + i * heightPercentage
-
-    return {
-      ...item,
-      y,
-      height: heightPercentage,
-      width: widthPercentage,
-      x: (100 - widthPercentage) / 2,
-    }
-  })
-
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-1 relative">
-        <div className="absolute inset-0">
-          <svg width="100%" height="100%" viewBox="0 0 100 100">
-            {stages.map((stage, i) => (
-              <g key={i}>
-                <motion.rect
-                  x={stage.x}
-                  y={stage.y}
-                  width={stage.width}
-                  height={stage.height}
-                  fill={stage.color}
-                  initial={{ width: 0, x: 50 }}
-                  animate={{ width: isActive ? stage.width : 0, x: isActive ? stage.x : 50 }}
-                  transition={{ duration: 0.8, delay: i * 0.15 }}
-                />
-                <motion.text
-                  x="50"
-                  y={stage.y + stage.height / 2}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fontSize="3"
-                  fontWeight="bold"
-                  fill="#fff"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.15 + 0.5 }}
-                >
-                  {stage.stage}: {stage.value}%
-                </motion.text>
-              </g>
-            ))}
-          </svg>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-around", padding: "4px 8px" }}>
+      {data.map((stage, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ width: 80, fontSize: 10, color: TEXT, textAlign: "right", flexShrink: 0 }}>{stage.stage}</div>
+          <div style={{ flex: 1, height: 20, background: BLUE_MED, borderRadius: 4, overflow: "hidden" }}>
+            <div style={{
+              height: "100%", width: `${stage.pct}%`,
+              background: `linear-gradient(90deg, ${BLUE}, ${BLUE_LIGHT})`,
+              borderRadius: 4,
+              display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 6,
+            }}>
+              {stage.pct > 20 && <span style={{ fontSize: 10, color: "white", fontWeight: 600 }}>{stage.count}</span>}
+            </div>
+          </div>
+          <div style={{ width: 30, fontSize: 10, color: BLUE, fontWeight: 700, textAlign: "right" }}>{stage.pct}%</div>
         </div>
-      </div>
+      ))}
     </div>
   )
 }

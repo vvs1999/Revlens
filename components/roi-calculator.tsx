@@ -167,11 +167,11 @@ export function ROICalculator() {
             </AnimatePresence>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-2 bg-primary/5 border-t border-primary/10">
+        <CardFooter className="flex flex-col items-center space-y-3 bg-primary/5 border-t border-primary/10 text-center p-6">
           <p className="text-sm text-muted-foreground">
             Want a more detailed analysis? Book a free consultation with our data experts.
           </p>
-          <Button variant="outline" className="w-full sm:w-auto">
+          <Button variant="outline" style={{ background: "#0284C7", color: "#ffffff", fontWeight: 600 }} className="px-6">
             Book Free Consultation
           </Button>
         </CardFooter>

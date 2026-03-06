@@ -1,610 +1,228 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
 import { PageLayout } from "@/components/page-layout"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowRight, ShoppingBag, Coffee, Scissors, Store } from "lucide-react"
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
+import { ArrowRight, UtensilsCrossed, ShoppingBag, Coffee, Store, Scissors } from "lucide-react"
+import { useState } from "react"
+
+const caseStudies = [
+  {
+    id: 1,
+    title: "Full-Service Restaurant: Cutting Waste While Growing Revenue",
+    excerpt: "A mid-size restaurant connecting Toast POS to RevLens gains real-time visibility into which menu items drive margin — and where waste is quietly eating profits.",
+    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    industry: "Restaurant",
+    icon: <UtensilsCrossed className="h-4 w-4" />,
+    results: [
+      { label: "Revenue Uplift", value: "+18–25%" },
+      { label: "Waste Reduction", value: "−60–70%" },
+      { label: "Labour Efficiency", value: "+20%" },
+    ],
+    filter: "restaurant",
+  },
+  {
+    id: 2,
+    title: "Café & Coffee Shop: Menu Intelligence for Higher Ticket Values",
+    excerpt: "A café using Square POS discovers the top 20% of menu items driving 80% of revenue — and builds a smarter, tighter menu around what actually sells.",
+    image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
+    industry: "Café",
+    icon: <Coffee className="h-4 w-4" />,
+    results: [
+      { label: "Avg. Transaction Value", value: "+30–40%" },
+      { label: "Menu Complexity", value: "−35%" },
+      { label: "Peak Hour Accuracy", value: "2× better" },
+    ],
+    filter: "restaurant",
+  },
+  {
+    id: 3,
+    title: "Independent Retail: Smarter Inventory, Less Dead Stock",
+    excerpt: "A boutique retail store connecting Lightspeed gets a weekly snapshot of what's moving, what's stagnant, and what to reorder before running out.",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80",
+    industry: "Retail",
+    icon: <ShoppingBag className="h-4 w-4" />,
+    results: [
+      { label: "Inventory Turnover", value: "+40–60%" },
+      { label: "Stockout Rate", value: "−70%" },
+      { label: "Profit Margin", value: "+12–18%" },
+    ],
+    filter: "retail",
+  },
+  {
+    id: 4,
+    title: "Convenience Store: Maximizing Revenue Per Square Foot",
+    excerpt: "A multi-location convenience store owner understands which products and placements drive transaction value — and which are wasting shelf space.",
+    image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=800&q=80",
+    industry: "Retail",
+    icon: <Store className="h-4 w-4" />,
+    results: [
+      { label: "Transaction Value", value: "+20–30%" },
+      { label: "Shrink Reduction", value: "−40%" },
+      { label: "Time Saved", value: "8+ hrs/wk" },
+    ],
+    filter: "retail",
+  },
+  {
+    id: 5,
+    title: "Beauty & Wellness Studio: Filling the Calendar, Growing Retention",
+    excerpt: "A salon connecting their booking system gets clarity on which services drive repeat visits, which stylists retain clients, and where revenue gaps are hiding.",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80",
+    industry: "Service",
+    icon: <Scissors className="h-4 w-4" />,
+    results: [
+      { label: "Booking Utilization", value: "+25–35%" },
+      { label: "Client Retention", value: "+20%" },
+      { label: "Revenue Per Chair", value: "+30%" },
+    ],
+    filter: "service",
+  },
+  {
+    id: 6,
+    title: "Grocery & Fresh Market: Reducing Perishable Waste",
+    excerpt: "A fresh market uses demand forecasting to dramatically cut perishable waste while maintaining optimal stock levels and improving margin.",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80",
+    industry: "Retail",
+    icon: <ShoppingBag className="h-4 w-4" />,
+    results: [
+      { label: "Waste Reduction", value: "−65%" },
+      { label: "Profit Margin", value: "+15%" },
+      { label: "Stockout Rate", value: "−50%" },
+    ],
+    filter: "retail",
+  },
+]
+
+const filters = [
+  { label: "All Industries", value: "all" },
+  { label: "Restaurant", value: "restaurant" },
+  { label: "Retail", value: "retail" },
+  { label: "Service", value: "service" },
+]
 
 export default function CaseStudiesPage() {
-  // Sample case studies data
-  const caseStudies = [
-    {
-      id: 1,
-      title: "How Riverside Café Increased Revenue by 35%",
-      excerpt:
-        "A struggling café used data analytics to optimize their menu, staffing, and marketing, resulting in a dramatic increase in revenue and customer satisfaction.",
-      image: "/cafe-insights-dashboard.png",
-      industry: "Restaurant",
-      results: [
-        { label: "Revenue Increase", value: "35%" },
-        { label: "Food Waste Reduction", value: "25%" },
-        { label: "Customer Retention", value: "40%" },
-      ],
-      icon: <Coffee className="h-5 w-5" />,
-      slug: "riverside-cafe",
-    },
-    {
-      id: 2,
-      title: "Urban Convenience: Inventory Optimization Success",
-      excerpt:
-        "This convenience store chain reduced stockouts by 80% while decreasing overall inventory costs through data-driven forecasting and ordering.",
-      image: "/stocked-convenience-aisle.png",
-      industry: "Retail",
-      results: [
-        { label: "Stockout Reduction", value: "80%" },
-        { label: "Inventory Cost Savings", value: "22%" },
-        { label: "Sales Growth", value: "18%" },
-      ],
-      icon: <Store className="h-5 w-5" />,
-      slug: "urban-convenience",
-    },
-    {
-      id: 3,
-      title: "Boutique Retailer Grows Customer Base by 45%",
-      excerpt:
-        "A small clothing boutique leveraged customer data to create targeted marketing campaigns and personalized shopping experiences.",
-      image: "/curated-collection-analysis.png",
-      industry: "Retail",
-      results: [
-        { label: "Customer Growth", value: "45%" },
-        { label: "Average Order Value", value: "+28%" },
-        { label: "Marketing ROI", value: "3.5x" },
-      ],
-      icon: <ShoppingBag className="h-5 w-5" />,
-      slug: "boutique-retailer",
-    },
-    {
-      id: 4,
-      title: "Sunset Restaurant's Staff Efficiency Transformation",
-      excerpt:
-        "This restaurant used data analytics to optimize staffing schedules, reducing labor costs while improving service quality and employee satisfaction.",
-      image: "/bustling-cafe-schedule.png",
-      industry: "Restaurant",
-      results: [
-        { label: "Labor Cost Reduction", value: "18%" },
-        { label: "Service Speed Improvement", value: "30%" },
-        { label: "Employee Retention", value: "+25%" },
-      ],
-      icon: <Coffee className="h-5 w-5" />,
-      slug: "sunset-restaurant",
-    },
-    {
-      id: 5,
-      title: "Style Studio Salon: Appointment Optimization",
-      excerpt:
-        "A beauty salon eliminated scheduling gaps and increased bookings through data-driven appointment management and customer insights.",
-      image: "/salon-calendar-view.png",
-      industry: "Service",
-      results: [
-        { label: "Booking Rate", value: "92%" },
-        { label: "Revenue Growth", value: "32%" },
-        { label: "Customer Satisfaction", value: "+40%" },
-      ],
-      icon: <Scissors className="h-5 w-5" />,
-      slug: "style-studio",
-    },
-    {
-      id: 6,
-      title: "Fresh Market: Reducing Waste While Growing Profits",
-      excerpt:
-        "This grocery store implemented inventory analytics to dramatically reduce perishable waste while maintaining optimal stock levels.",
-      image: "/organized-grocery-shelves.png",
-      industry: "Retail",
-      results: [
-        { label: "Waste Reduction", value: "65%" },
-        { label: "Profit Margin", value: "+15%" },
-        { label: "Customer Satisfaction", value: "+22%" },
-      ],
-      icon: <ShoppingBag className="h-5 w-5" />,
-      slug: "fresh-market",
-    },
-  ]
+  const [activeFilter, setActiveFilter] = useState("all")
+  const filtered = activeFilter === "all" ? caseStudies : caseStudies.filter(c => c.filter === activeFilter)
 
   return (
     <PageLayout>
-      {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-background to-primary/5">
+      {/* Hero */}
+      <section className="w-full py-16 md:py-20 section-alt-1">
         <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                Success Stories
-              </h1>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                Real results from real businesses. See how our data analytics solutions have helped local businesses
-                thrive.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Case Studies Section */}
-      <section className="w-full py-12 md:py-24 bg-background">
-        <div className="container px-4 md:px-6">
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="w-full max-w-md mx-auto grid grid-cols-3 mb-8">
-              <TabsTrigger
-                value="all"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-              >
-                All Industries
-              </TabsTrigger>
-              <TabsTrigger
-                value="restaurant"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-              >
-                Restaurant
-              </TabsTrigger>
-              <TabsTrigger
-                value="retail"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-              >
-                Retail
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="all" className="space-y-8">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {caseStudies.map((study) => (
-                  <Card key={study.id} className="overflow-hidden border-2 border-primary/10 h-full flex flex-col">
-                    <div className="aspect-video relative">
-                      <Image src={study.image || "/placeholder.svg"} alt={study.title} fill className="object-cover" />
-                      <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm p-2 rounded-full">
-                        <div className="text-primary">{study.icon}</div>
-                      </div>
-                    </div>
-                    <CardHeader className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-                          {study.industry}
-                        </span>
-                      </div>
-                      <CardTitle className="text-xl">
-                        <Link href={`/case-studies/${study.slug}`} className="hover:text-accent transition-colors">
-                          {study.title}
-                        </Link>
-                      </CardTitle>
-                      <CardDescription className="line-clamp-2">{study.excerpt}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0 flex-grow">
-                      <div className="grid grid-cols-3 gap-2 mt-4">
-                        {study.results.map((result, index) => (
-                          <div key={index} className="text-center p-2 bg-primary/5 rounded-lg">
-                            <div className="text-lg font-bold text-primary">{result.value}</div>
-                            <div className="text-xs text-muted-foreground">{result.label}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter className="p-4 pt-0 border-t mt-4">
-                      <Link
-                        href={`/case-studies/${study.slug}`}
-                        className="text-sm font-medium text-accent flex items-center hover:underline w-full justify-end"
-                      >
-                        Read Full Case Study
-                        <ArrowRight className="ml-1 h-4 w-4" />
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-            <TabsContent value="restaurant" className="space-y-8">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {caseStudies
-                  .filter((study) => study.industry === "Restaurant")
-                  .map((study) => (
-                    <Card key={study.id} className="overflow-hidden border-2 border-primary/10 h-full flex flex-col">
-                      <div className="aspect-video relative">
-                        <Image
-                          src={study.image || "/placeholder.svg"}
-                          alt={study.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm p-2 rounded-full">
-                          <div className="text-primary">{study.icon}</div>
-                        </div>
-                      </div>
-                      <CardHeader className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-                            {study.industry}
-                          </span>
-                        </div>
-                        <CardTitle className="text-xl">
-                          <Link href={`/case-studies/${study.slug}`} className="hover:text-accent transition-colors">
-                            {study.title}
-                          </Link>
-                        </CardTitle>
-                        <CardDescription className="line-clamp-2">{study.excerpt}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0 flex-grow">
-                        <div className="grid grid-cols-3 gap-2 mt-4">
-                          {study.results.map((result, index) => (
-                            <div key={index} className="text-center p-2 bg-primary/5 rounded-lg">
-                              <div className="text-lg font-bold text-primary">{result.value}</div>
-                              <div className="text-xs text-muted-foreground">{result.label}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 border-t mt-4">
-                        <Link
-                          href={`/case-studies/${study.slug}`}
-                          className="text-sm font-medium text-accent flex items-center hover:underline w-full justify-end"
-                        >
-                          Read Full Case Study
-                          <ArrowRight className="ml-1 h-4 w-4" />
-                        </Link>
-                      </CardFooter>
-                    </Card>
-                  ))}
-              </div>
-            </TabsContent>
-            <TabsContent value="retail" className="space-y-8">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {caseStudies
-                  .filter((study) => study.industry === "Retail")
-                  .map((study) => (
-                    <Card key={study.id} className="overflow-hidden border-2 border-primary/10 h-full flex flex-col">
-                      <div className="aspect-video relative">
-                        <Image
-                          src={study.image || "/placeholder.svg"}
-                          alt={study.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm p-2 rounded-full">
-                          <div className="text-primary">{study.icon}</div>
-                        </div>
-                      </div>
-                      <CardHeader className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-                            {study.industry}
-                          </span>
-                        </div>
-                        <CardTitle className="text-xl">
-                          <Link href={`/case-studies/${study.slug}`} className="hover:text-accent transition-colors">
-                            {study.title}
-                          </Link>
-                        </CardTitle>
-                        <CardDescription className="line-clamp-2">{study.excerpt}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0 flex-grow">
-                        <div className="grid grid-cols-3 gap-2 mt-4">
-                          {study.results.map((result, index) => (
-                            <div key={index} className="text-center p-2 bg-primary/5 rounded-lg">
-                              <div className="text-lg font-bold text-primary">{result.value}</div>
-                              <div className="text-xs text-muted-foreground">{result.label}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 border-t mt-4">
-                        <Link
-                          href={`/case-studies/${study.slug}`}
-                          className="text-sm font-medium text-accent flex items-center hover:underline w-full justify-end"
-                        >
-                          Read Full Case Study
-                          <ArrowRight className="ml-1 h-4 w-4" />
-                        </Link>
-                      </CardFooter>
-                    </Card>
-                  ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </section>
-
-      {/* Featured Case Study Section */}
-      <section className="w-full py-12 md:py-24 bg-primary/5">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <div className="space-y-2">
-              <span className="inline-block text-sm font-semibold text-accent px-3 py-1 rounded-full bg-accent/10 mb-2">
-                Featured Case Study
+          <AnimateOnScroll animation="fade">
+            <div className="flex flex-col items-center text-center space-y-5 max-w-3xl mx-auto">
+              <span className="inline-block text-sm font-semibold px-3 py-1 rounded-full"
+                style={{ background: "rgba(14,165,233,0.1)", color: "#0EA5E9", border: "1px solid rgba(14,165,233,0.2)" }}>
+                Case Studies
               </span>
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-primary">
-                Riverside Café's Transformation
-              </h2>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                How data analytics turned around a struggling local café
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-foreground">
+                What RevLens Can Do For{" "}
+                <span className="gradient-text">Your Business</span>
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl">
+                Projected outcomes based on industry benchmarks — the kind of results RevLens is built to deliver once connected to your real data.
               </p>
+              <div className="text-sm px-4 py-2.5 rounded-lg text-muted-foreground"
+                style={{ background: "rgba(14,165,233,0.05)", border: "1px solid rgba(14,165,233,0.15)" }}>
+                These are projections, not client testimonials. We're pre-revenue and building toward our first clients.{" "}
+                <button onClick={() => window.location.href = "/contact"} style={{ color: "#0284C7", fontWeight: 600 }}>
+                  Want to be one? Book a demo.
+                </button>
+              </div>
+            </div>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* Filter + Cards */}
+      <section className="w-full py-12 md:py-20 section-base">
+        <div className="container px-4 md:px-6">
+
+          {/* Filter tabs */}
+          <div className="flex justify-center mb-10">
+            <div className="flex gap-1 p-1 rounded-xl" style={{ background: "hsl(var(--muted))" }}>
+              {filters.map((f) => (
+                <button key={f.value} onClick={() => setActiveFilter(f.value)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                  style={activeFilter === f.value
+                    ? { background: "#0284C7", color: "#ffffff" }
+                    : { color: "hsl(var(--muted-foreground))", background: "transparent" }}>
+                  {f.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <AnimateOnScroll animation="slide-right">
-              <div className="relative">
-                <div className="absolute -top-4 -left-4 w-full h-full border-2 border-accent/30 rounded-xl"></div>
-                <Image
-                  src="/cafe-performance-overview.png"
-                  width={600}
-                  height={400}
-                  alt="Riverside Café Case Study"
-                  className="rounded-xl object-cover shadow-lg relative z-10"
-                />
-                <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-accent/10 rounded-full blur-xl"></div>
-              </div>
-            </AnimateOnScroll>
-
-            <AnimateOnScroll animation="slide-left">
-              <div className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <div className="bg-primary/10 p-2 rounded-full">
-                    <Coffee className="h-5 w-5 text-primary" />
+          {/* Card grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {filtered.map((study, i) => (
+              <AnimateOnScroll key={study.id} animation="slide-up" delay={i * 0.05}>
+                <div className="enhanced-card overflow-hidden flex flex-col h-full">
+                  {/* Image */}
+                  <div className="aspect-video relative overflow-hidden">
+                    <img src={study.image} alt={study.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full text-white"
+                      style={{ background: "rgba(2,132,199,0.85)" }}>
+                      {study.icon} {study.industry}
+                    </div>
                   </div>
-                  <span className="text-sm font-medium text-primary">Restaurant Industry</span>
-                </div>
 
-                <h3 className="text-2xl font-bold">The Challenge</h3>
-                <p className="text-muted-foreground">
-                  Riverside Café was struggling with declining sales, high food waste, and inconsistent customer
-                  experience. Owner Sarah Johnson knew something needed to change but wasn't sure where to start.
-                </p>
+                  {/* Content */}
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="text-base font-bold text-foreground mb-2 leading-snug">{study.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{study.excerpt}</p>
 
-                <h3 className="text-2xl font-bold">Our Approach</h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <ArrowRight className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <span>Analyzed sales data to identify top-performing and underperforming menu items</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ArrowRight className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <span>Implemented inventory tracking to reduce waste and optimize ordering</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ArrowRight className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <span>Created customer segmentation to develop targeted marketing campaigns</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <ArrowRight className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <span>Optimized staffing based on customer flow patterns</span>
-                  </li>
-                </ul>
+                    {/* Metrics */}
+                    <div className="grid grid-cols-3 gap-2 mb-4 mt-auto">
+                      {study.results.map((r, j) => (
+                        <div key={j} className="text-center p-2 rounded-lg"
+                          style={{ background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.12)" }}>
+                          <div className="text-sm font-bold" style={{ color: "#0284C7" }}>{r.value}</div>
+                          <div className="text-xs text-muted-foreground leading-tight mt-0.5">{r.label}</div>
+                        </div>
+                      ))}
+                    </div>
 
-                <div className="grid grid-cols-3 gap-4 mt-6">
-                  <div className="bg-background p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-primary">35%</div>
-                    <div className="text-sm text-muted-foreground">Revenue Increase</div>
-                  </div>
-                  <div className="bg-background p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-primary">25%</div>
-                    <div className="text-sm text-muted-foreground">Food Waste Reduction</div>
-                  </div>
-                  <div className="bg-background p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-primary">40%</div>
-                    <div className="text-sm text-muted-foreground">Customer Retention</div>
+                    <div className="pt-3 border-t" style={{ borderColor: "hsl(var(--border))" }}>
+                      <button onClick={() => window.location.href = "/contact"}
+                        className="text-sm font-medium flex items-center gap-1 transition-all group"
+                        style={{ color: "#0284C7" }}>
+                        Get This For My Business
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <Button className="mt-4" onClick={() => (window.location.href = "/case-studies/riverside-cafe")}>
-                  Read Full Case Study
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </AnimateOnScroll>
+              </AnimateOnScroll>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="w-full py-12 md:py-24 bg-background">
+      {/* CTA */}
+      <section className="w-full py-16 md:py-20" style={{ background: "#0284C7" }}>
         <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-primary">What Our Clients Say</h2>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                Hear directly from the business owners who've transformed their operations with our data analytics
-              </p>
+          <div className="max-w-2xl mx-auto text-center space-y-5">
+            <h2 className="text-3xl font-bold text-white md:text-4xl">
+              Ready to Become Our First Success Story?
+            </h2>
+            <p className="text-white/80 text-lg">
+              Book a free demo and we'll show you exactly what RevLens looks like connected to your POS or ERP. No commitments. No fake numbers.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" style={{ background: "#ffffff", color: "#0284C7", fontWeight: 600 }}
+                onClick={() => window.location.href = "/contact"}>
+                Book a Free Demo <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+              <Button size="lg" variant="outline"
+                style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", background: "transparent" }}
+                onClick={() => window.location.href = "/services"}>
+                View Our Services
+              </Button>
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <AnimateOnScroll animation="slide-up" delay={0.1}>
-              <Card className="border-2 border-primary/10">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-5 h-5 text-accent"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ))}
-                    </div>
-                    <blockquote className="text-muted-foreground italic">
-                      "The data insights we received helped us optimize our menu and reduce food waste by 25%. Our
-                      profit margins have never been better. I only wish we'd started sooner!"
-                    </blockquote>
-                    <div className="flex items-center gap-3 pt-4 border-t">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                        SJ
-                      </div>
-                      <div>
-                        <div className="font-semibold">Sarah Johnson</div>
-                        <div className="text-sm text-muted-foreground">Riverside Café</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </AnimateOnScroll>
-
-            <AnimateOnScroll animation="slide-up" delay={0.2}>
-              <Card className="border-2 border-primary/10">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-5 h-5 text-accent"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ))}
-                    </div>
-                    <blockquote className="text-muted-foreground italic">
-                      "We reduced our inventory waste by 22% in the first three months. The seasonal forecasting has
-                      been a game-changer for our small grocery store."
-                    </blockquote>
-                    <div className="flex items-center gap-3 pt-4 border-t">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                        MC
-                      </div>
-                      <div>
-                        <div className="font-semibold">Michael Chen</div>
-                        <div className="text-sm text-muted-foreground">Urban Convenience</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </AnimateOnScroll>
-
-            <AnimateOnScroll animation="slide-up" delay={0.3}>
-              <Card className="border-2 border-primary/10">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-5 h-5 text-accent"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ))}
-                    </div>
-                    <blockquote className="text-muted-foreground italic">
-                      "We saw a 45% increase in our customer base after implementing the targeted marketing campaigns.
-                      The ROI has been incredible."
-                    </blockquote>
-                    <div className="flex items-center gap-3 pt-4 border-t">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                        AD
-                      </div>
-                      <div>
-                        <div className="font-semibold">Amanda Davis</div>
-                        <div className="text-sm text-muted-foreground">Boutique Retailer</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </AnimateOnScroll>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="w-full py-12 md:py-24 bg-primary text-primary-foreground">
-        <div className="container px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4">
-                Ready to Become Our Next Success Story?
-              </h2>
-              <p className="text-primary-foreground/80 md:text-xl mb-6">
-                Book a free consultation with our data experts and discover how we can help your business grow.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  className="bg-accent text-accent-foreground hover:bg-accent/90"
-                  onClick={() => (window.location.href = "/contact")}
-                >
-                  Book Free Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={() => (window.location.href = "/services")}
-                >
-                  View Services
-                </Button>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <div className="bg-primary-foreground/10 p-6 rounded-lg max-w-md">
-                <h3 className="text-xl font-bold mb-4">Our Process</h3>
-                <ol className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="bg-accent/20 text-accent font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      1
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Initial Consultation</h4>
-                      <p className="text-primary-foreground/70 text-sm">
-                        We discuss your business challenges and goals
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="bg-accent/20 text-accent font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Data Assessment</h4>
-                      <p className="text-primary-foreground/70 text-sm">
-                        We analyze your current data and identify opportunities
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="bg-accent/20 text-accent font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Implementation</h4>
-                      <p className="text-primary-foreground/70 text-sm">We set up your custom analytics solution</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="bg-accent/20 text-accent font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      4
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Ongoing Support</h4>
-                      <p className="text-primary-foreground/70 text-sm">
-                        We provide continuous guidance and optimization
-                      </p>
-                    </div>
-                  </li>
-                </ol>
-              </div>
-            </div>
+            <p className="text-xs text-white/50">
+              * All metrics are projections based on industry benchmarks. Individual results will vary.
+            </p>
           </div>
         </div>
       </section>

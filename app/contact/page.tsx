@@ -1,467 +1,268 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { PageLayout } from "@/components/page-layout"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowRight, Mail, MapPin, Phone, Clock, CheckCircle, Loader2 } from "lucide-react"
+import { ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp } from "lucide-react"
+import { AnimateOnScroll } from "@/components/animate-on-scroll"
+
+const BLUE = "#0284C7"
+
+const faqs = [
+  { q: "How quickly can I get started?", a: "We're currently onboarding a small group of early operators. Once you apply, we'll reach out within 48 hours to set up a call, connect to your POS, and get your first AI Weekly Digest running — typically within one week." },
+  { q: "What types of businesses does RevLens work with?", a: "Right now we're focused on independent operators: restaurants, cafés, retail stores, and salons. If you're running a local business with a POS system, we can almost certainly connect to it." },
+  { q: "Do I need any technical knowledge?", a: "None. We handle the entire setup. You connect your POS, we do the rest. The weekly digest lands in your inbox in plain English — no dashboards to learn, no exports to run." },
+  { q: "What POS systems do you connect to?", a: "We're actively building integrations with Square, Toast, Lightspeed, and Shopify POS. If you're on a different system, tell us — we're prioritising based on what our early operators actually use." },
+  { q: "What does it cost?", a: "We haven't published public pricing yet. Early operators get founding-client pricing, which will be significantly below what we charge at launch. Book a call and we'll walk you through options based on your business size." },
+  { q: "Is my data secure?", a: "Yes. We use read-only API connections to your POS — we can never make changes to your system. All data is encrypted in transit and at rest. We don't sell or share your data with anyone." },
+]
 
 export default function ContactPage() {
-  const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle")
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    message: "",
-    interest: "sales-analysis",
-  })
+  const [formState, setFormState] = useState<"idle" | "submitting" | "success">("idle")
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [formData, setFormData] = useState({ name: "", email: "", business: "", type: "", message: "" })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleRadioChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, interest: value }))
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormState("submitting")
-
-    // Simulate API call
     setTimeout(() => {
-      // Simulate successful submission
       setFormState("success")
-      // Reset form after 3 seconds
       setTimeout(() => {
         setFormState("idle")
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          company: "",
-          message: "",
-          interest: "sales-analysis",
-        })
-      }, 3000)
+        setFormData({ name: "", email: "", business: "", type: "", message: "" })
+      }, 4000)
     }, 1500)
   }
 
   return (
     <PageLayout>
-      {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-background to-primary/5">
+
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="w-full py-16 md:py-20 section-alt-1">
         <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                Get in Touch
+          <AnimateOnScroll animation="fade">
+            <div className="flex flex-col items-center text-center space-y-5 max-w-3xl mx-auto">
+              <span className="inline-block text-sm font-semibold px-3 py-1 rounded-full"
+                style={{ background: "rgba(14,165,233,0.1)", color: "#0EA5E9", border: "1px solid rgba(14,165,233,0.2)" }}>
+                Contact
+              </span>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-foreground">
+                Let's Talk About{" "}
+                <span className="gradient-text">Your Business</span>
               </h1>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                Have questions about our services? Ready to start your data journey? We're here to help.
+              <p className="text-lg text-muted-foreground max-w-2xl">
+                Whether you want early access, have a question, or just want to see if RevLens is a fit —
+                send us a message and we'll get back to you within 24 hours.
               </p>
             </div>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ── FORM + SIDEBAR ───────────────────────────────────────── */}
+      <section className="w-full py-12 md:py-16 section-base">
+        <div className="container px-4 md:px-6">
+          <div className="grid lg:grid-cols-5 gap-10 max-w-6xl mx-auto">
+
+            {/* ── LEFT: FORM ── */}
+            <div className="lg:col-span-3">
+              <AnimateOnScroll animation="slide-up">
+                <div className="rounded-2xl p-8"
+                  style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", boxShadow: "0 8px 40px rgba(0,0,0,0.06)" }}>
+                  {formState === "success" ? (
+                    <div className="flex flex-col items-center text-center py-12 space-y-4">
+                      <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(22,163,74,0.1)" }}>
+                        <CheckCircle className="h-8 w-8 text-green-500" />
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground">Message received.</h3>
+                      <p className="text-muted-foreground max-w-sm">
+                        We'll get back to you within 24 hours. If it's urgent, email us at{" "}
+                        <a href="mailto:hello@revlens.co" className="font-medium hover:underline" style={{ color: BLUE }}>hello@revlens.co</a>
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-foreground mb-1">Send a Message</h2>
+                        <p className="text-sm text-muted-foreground">We read every message and respond personally.</p>
+                      </div>
+                      <form onSubmit={handleSubmit}>
+                        <div className="space-y-5">
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="name" className="text-sm font-medium">Your Name</Label>
+                              <Input id="name" name="name" placeholder="Alex Johnson" required value={formData.name} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                              <Input id="email" name="email" type="email" placeholder="alex@yourbusiness.com" required value={formData.email} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                            </div>
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="business" className="text-sm font-medium">Business Name</Label>
+                              <Input id="business" name="business" placeholder="The Corner Café" value={formData.business} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="type" className="text-sm font-medium">Business Type</Label>
+                              <Input id="type" name="type" placeholder="Café, Restaurant, Retail..." value={formData.type} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="message" className="text-sm font-medium">What do you want to know or achieve?</Label>
+                            <Textarea id="message" name="message" rows={5}
+                              placeholder="Tell us about your business — what decisions are you making blind right now? What would change if you had better data?"
+                              value={formData.message} onChange={handleChange} disabled={formState !== "idle"} />
+                          </div>
+                          <Button type="submit" className="w-full h-11 font-semibold" style={{ background: BLUE, color: "#ffffff" }} disabled={formState !== "idle"}>
+                            {formState === "submitting"
+                              ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</>
+                              : <>Send Message <ArrowRight className="ml-2 h-4 w-4" /></>}
+                          </Button>
+                          <p className="text-xs text-center text-muted-foreground">
+                            Prefer email?{" "}
+                            <a href="mailto:hello@revlens.co" className="font-medium hover:underline" style={{ color: BLUE }}>hello@revlens.co</a>
+                          </p>
+                        </div>
+                      </form>
+                    </>
+                  )}
+                </div>
+              </AnimateOnScroll>
+            </div>
+
+            {/* ── RIGHT: WHAT HAPPENS NEXT + BENEFITS ── */}
+            <div className="lg:col-span-2 space-y-5">
+              <AnimateOnScroll animation="slide-up" delay={0.1}>
+
+                {/* What happens next */}
+                <div className="rounded-2xl p-6"
+                  style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+                  <h3 className="font-bold text-foreground mb-5">What happens next</h3>
+                  <div className="space-y-5">
+                    {[
+                      { step: "1", title: "We reply personally", desc: "Every message is read and answered by a real person — within 24 hours." },
+                      { step: "2", title: "We book a 30-min call", desc: "If it looks like a good fit, we set up a quick call to learn about your business." },
+                      { step: "3", title: "We connect to your POS", desc: "We handle the setup. No technical work needed on your end." },
+                      { step: "4", title: "Your first digest ships", desc: "Within one week, your first AI Weekly Digest lands in your inbox." },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-4">
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5"
+                          style={{ background: BLUE }}>
+                          {item.step}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-foreground">{item.title}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Founding client benefits */}
+                <div className="rounded-2xl p-6"
+                  style={{ background: `rgba(2,132,199,0.04)`, border: "1px solid rgba(2,132,199,0.15)" }}>
+                  <h3 className="font-bold text-foreground mb-1">Why reach out early?</h3>
+                  <p className="text-xs text-muted-foreground mb-4">We're onboarding a small founding group. Here's what that means for you.</p>
+                  <ul className="space-y-3">
+                    {[
+                      "Founding-client pricing — locked in permanently",
+                      "Direct input into what we build next",
+                      "White-glove onboarding from the founding team",
+                      "First access to every new feature as it ships",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                        <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" style={{ color: BLUE }} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+              </AnimateOnScroll>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Contact Options */}
-      <section className="w-full py-12 md:py-24 bg-background">
-        <div className="container px-4 md:px-6">
-          <Tabs defaultValue="form" className="w-full max-w-4xl mx-auto">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
-              <TabsTrigger
-                value="form"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-              >
-                Contact Form
-              </TabsTrigger>
-              <TabsTrigger
-                value="info"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-              >
-                Contact Info
-              </TabsTrigger>
-              <TabsTrigger
-                value="faq"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
-              >
-                FAQs
-              </TabsTrigger>
-            </TabsList>
-            <div className="mt-8">
-              <TabsContent value="form" className="space-y-4">
-                <Card className="border-2 border-primary/10">
-                  <CardHeader>
-                    <CardTitle>Send Us a Message</CardTitle>
-                    <CardDescription>
-                      Fill out the form below and our team will get back to you within 24 hours.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleSubmit}>
-                      <div className="grid gap-6">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input
-                              id="name"
-                              name="name"
-                              placeholder="John Smith"
-                              required
-                              value={formData.name}
-                              onChange={handleChange}
-                              disabled={formState !== "idle"}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                              id="email"
-                              name="email"
-                              type="email"
-                              placeholder="john@example.com"
-                              required
-                              value={formData.email}
-                              onChange={handleChange}
-                              disabled={formState !== "idle"}
-                            />
-                          </div>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number</Label>
-                            <Input
-                              id="phone"
-                              name="phone"
-                              placeholder="(555) 555-5555"
-                              value={formData.phone}
-                              onChange={handleChange}
-                              disabled={formState !== "idle"}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="company">Company Name</Label>
-                            <Input
-                              id="company"
-                              name="company"
-                              placeholder="Your Business"
-                              value={formData.company}
-                              onChange={handleChange}
-                              disabled={formState !== "idle"}
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>I'm interested in:</Label>
-                          <RadioGroup
-                            value={formData.interest}
-                            onValueChange={handleRadioChange}
-                            className="flex flex-col space-y-1"
-                            disabled={formState !== "idle"}
-                          >
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="sales-analysis" id="sales-analysis" />
-                              <Label htmlFor="sales-analysis" className="font-normal">
-                                Sales Analysis
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="inventory-optimization" id="inventory-optimization" />
-                              <Label htmlFor="inventory-optimization" className="font-normal">
-                                Inventory Optimization
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="customer-insights" id="customer-insights" />
-                              <Label htmlFor="customer-insights" className="font-normal">
-                                Customer Insights
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="growth-strategy" id="growth-strategy" />
-                              <Label htmlFor="growth-strategy" className="font-normal">
-                                Growth Strategy
-                              </Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="other" id="other" />
-                              <Label htmlFor="other" className="font-normal">
-                                Other
-                              </Label>
-                            </div>
-                          </RadioGroup>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="message">Message</Label>
-                          <Textarea
-                            id="message"
-                            name="message"
-                            placeholder="Tell us about your business and how we can help..."
-                            rows={5}
-                            value={formData.message}
-                            onChange={handleChange}
-                            disabled={formState !== "idle"}
-                          />
-                        </div>
-                        <Button type="submit" className="w-full" disabled={formState !== "idle"}>
-                          {formState === "submitting" ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Sending...
-                            </>
-                          ) : formState === "success" ? (
-                            <>
-                              <CheckCircle className="mr-2 h-4 w-4" />
-                              Message Sent!
-                            </>
-                          ) : (
-                            <>
-                              Send Message
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </form>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="info" className="space-y-4">
-                <Card className="border-2 border-primary/10">
-                  <CardHeader>
-                    <CardTitle>Contact Information</CardTitle>
-                    <CardDescription>Reach out to us through any of these channels</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-2 gap-8">
-                      <div className="space-y-6">
-                        <div className="flex items-start gap-3">
-                          <div className="bg-primary/10 p-2 rounded-full">
-                            <Mail className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">Email Us</h3>
-                            <p className="text-muted-foreground">For general inquiries:</p>
-                            <a href="mailto:info@datainsight.com" className="text-accent hover:underline">
-                              info@datainsight.com
-                            </a>
-                            <p className="text-muted-foreground mt-2">For support:</p>
-                            <a href="mailto:support@datainsight.com" className="text-accent hover:underline">
-                              support@datainsight.com
-                            </a>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="bg-primary/10 p-2 rounded-full">
-                            <Phone className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">Call Us</h3>
-                            <p className="text-muted-foreground">Main Office:</p>
-                            <a href="tel:+15555555555" className="text-accent hover:underline">
-                              (555) 555-5555
-                            </a>
-                            <p className="text-muted-foreground mt-2">Customer Support:</p>
-                            <a href="tel:+15555555556" className="text-accent hover:underline">
-                              (555) 555-5556
-                            </a>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="bg-primary/10 p-2 rounded-full">
-                            <Clock className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">Business Hours</h3>
-                            <p className="text-muted-foreground">Monday - Friday:</p>
-                            <p>9:00 AM - 6:00 PM PST</p>
-                            <p className="text-muted-foreground mt-2">Saturday - Sunday:</p>
-                            <p>Closed</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-6">
-                        <div className="flex items-start gap-3">
-                          <div className="bg-primary/10 p-2 rounded-full">
-                            <MapPin className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">Visit Us</h3>
-                            <p className="text-muted-foreground">San Francisco Office:</p>
-                            <p>123 Business Ave, Suite 100</p>
-                            <p>San Francisco, CA 94107</p>
-                            <p className="text-muted-foreground mt-2">Austin Office:</p>
-                            <p>456 Tech Blvd, Suite 200</p>
-                            <p>Austin, TX 78701</p>
-                          </div>
-                        </div>
-                        <div className="mt-6 h-[200px] w-full bg-muted rounded-lg overflow-hidden">
-                          <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0968173775!2d-122.40058492392836!3d37.78778971469194!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085807ded297e89%3A0x9cdf304c4c6c1ba!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1682452586324!5m2!1sen!2sus"
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0 }}
-                            allowFullScreen
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                          ></iframe>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="faq" className="space-y-4">
-                <Card className="border-2 border-primary/10">
-                  <CardHeader>
-                    <CardTitle>Frequently Asked Questions</CardTitle>
-                    <CardDescription>Quick answers to common questions</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">How quickly can you start working with my business?</h3>
-                        <p className="text-muted-foreground">
-                          We can typically begin the onboarding process within 1-2 business days after your initial
-                          consultation. The full implementation timeline depends on the complexity of your data and
-                          specific needs, but most clients see their first insights within 2 weeks.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">What types of businesses do you work with?</h3>
-                        <p className="text-muted-foreground">
-                          We specialize in working with local businesses including restaurants, retail stores, cafés,
-                          convenience stores, salons, and other service-based businesses. If you're unsure if we're a
-                          good fit, please contact us for a consultation.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">Do I need technical expertise to use your services?</h3>
-                        <p className="text-muted-foreground">
-                          Not at all! We designed our services specifically for business owners without technical
-                          backgrounds. We handle all the complex data work and deliver insights in clear, actionable
-                          formats that anyone can understand and implement.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">How do you access my business data?</h3>
-                        <p className="text-muted-foreground">
-                          We offer several secure methods for data integration. We can connect directly to your
-                          point-of-sale system, inventory management software, or other business tools. Alternatively,
-                          you can upload spreadsheets or reports. All data transfers are encrypted and we follow strict
-                          security protocols.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">What is your pricing structure?</h3>
-                        <p className="text-muted-foreground">
-                          Our pricing starts at $499/month for our Starter plan, with more comprehensive options
-                          available for growing businesses. We also offer custom Enterprise solutions. All plans include
-                          a 30-day satisfaction guarantee. Please visit our Services page for detailed pricing
-                          information.
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">Do you offer a free trial or consultation?</h3>
-                        <p className="text-muted-foreground">
-                          Yes! We offer a free 30-minute consultation to discuss your business needs and determine if
-                          our services are a good fit. During this call, we can provide a demo of our platform and
-                          answer any questions you may have.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-sm text-muted-foreground">
-                      Don't see your question here?{" "}
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto text-accent"
-                        onClick={() => document.querySelector('[data-value="form"]')?.click()}
-                      >
-                        Contact us
-                      </Button>{" "}
-                      and we'll be happy to help.
-                    </p>
-                  </CardFooter>
-                </Card>
-              </TabsContent>
+      {/* ── FAQ ──────────────────────────────────────────────────── */}
+      <section className="w-full py-16 md:py-20 section-alt-1">
+        <div className="container px-4 md:px-6 max-w-3xl mx-auto">
+          <AnimateOnScroll animation="fade">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-3">Common Questions</h2>
+              <p className="text-muted-foreground">Straight answers — no marketing speak.</p>
             </div>
-          </Tabs>
+          </AnimateOnScroll>
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.05}>
+                <div className="rounded-xl overflow-hidden" style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}>
+                  <button className="w-full flex items-center justify-between p-5 text-left" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                    <span className="font-semibold text-foreground pr-4">{faq.q}</span>
+                    {openFaq === i ? <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-5 pb-5">
+                      <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                    </div>
+                  )}
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="w-full py-12 md:py-24 bg-primary text-primary-foreground">
+      {/* ── CTA ──────────────────────────────────────────────────── */}
+      <section className="w-full py-16 md:py-20" style={{ background: BLUE }}>
         <div className="container px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
             <div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4">
-                Ready to Transform Your Business with Data?
-              </h2>
-              <p className="text-primary-foreground/80 md:text-xl mb-6">
-                Book a free consultation with our data experts and discover how we can help you grow.
+              <h2 className="text-3xl font-bold text-white mb-4">Not Sure Yet? See the Demo.</h2>
+              <p className="text-white/80 mb-6 text-lg leading-relaxed">
+                Take 5 minutes with the interactive demo before reaching out. Switch business types, explore the AI Weekly Digest, and see exactly what RevLens would look like with your data.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  className="bg-accent text-accent-foreground hover:bg-accent/90"
-                  onClick={() => {
-                    // Scroll to the contact form section
-                    const formTab = document.querySelector('[data-value="form"]') as HTMLElement
-                    if (formTab) {
-                      formTab.click()
-                      setTimeout(() => {
-                        window.scrollTo({ top: 0, behavior: "smooth" })
-                      }, 100)
-                    }
-                  }}
-                >
-                  Book Free Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button style={{ background: "#ffffff", color: BLUE, fontWeight: 600 }} onClick={() => window.location.href = "/dashboard-demo"}>
+                  View Demo <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={() => (window.location.href = "/services")}
-                >
-                  View Services
+                <Button variant="outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", background: "transparent" }} onClick={() => window.location.href = "/services"}>
+                  See Pricing
                 </Button>
               </div>
             </div>
-            <div className="flex justify-center">
-              <div className="bg-primary-foreground/10 p-6 rounded-lg max-w-md">
-                <h3 className="text-xl font-bold mb-4">Our Guarantee</h3>
-                <p className="mb-4">
-                  We're confident in the value we provide. If you don't see measurable improvements in your business
-                  within 90 days, we'll refund your investment.
-                </p>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-accent" />
-                  <span>No long-term contracts</span>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <CheckCircle className="h-5 w-5 text-accent" />
-                  <span>Cancel anytime</span>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <CheckCircle className="h-5 w-5 text-accent" />
-                  <span>90-day satisfaction guarantee</span>
-                </div>
-              </div>
+            <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+              <h3 className="text-lg font-bold text-white mb-4">Why Reach Out Early?</h3>
+              <ul className="space-y-3">
+                {[
+                  "Founding-client pricing — locked in permanently before launch",
+                  "Direct input into what we build next",
+                  "White-glove onboarding from the founding team",
+                  "First access to every new feature as it ships",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-white/80">
+                    <CheckCircle className="h-4 w-4 shrink-0 mt-0.5 text-white/60" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
+
     </PageLayout>
   )
 }
