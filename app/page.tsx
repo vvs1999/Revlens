@@ -6,6 +6,7 @@ import { IndustryExamples } from "@/components/industry-examples"
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
 import { ChatBot } from "@/components/chat-bot"
 import { MarqueeBanner } from "@/components/marquee-banner"
+import { CompetitorSection } from "@/components/competitor-section"
 import Link from "next/link"
 import { ArrowRight, LineChart, PieChart, TrendingUp, Plug, Clock, ShieldCheck } from "lucide-react"
 
@@ -21,7 +22,7 @@ export default function Home() {
       <EnhancedHeroSection />
       <MarqueeBanner />
 
-      {/* Challenges — white */}
+      {/* Challenges */}
       <section className="w-full py-16 md:py-24 lg:py-32 section-base">
         <div className="container px-4 md:px-6">
           <AnimateOnScroll animation="fade">
@@ -32,14 +33,14 @@ export default function Home() {
               </span>
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-foreground">Common Challenges We Solve</h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed">
-                Restaurants and food businesses face unique data challenges. RevLens is built to solve them.
+                Independent operators face unique data challenges. RevLens is built to solve them.
               </p>
             </div>
           </AnimateOnScroll>
           <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12 mt-12">
             {[
               { icon: <LineChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Unsure which products sell best?", body: "Sales analysis identifies your top performers and slow movers — so you stock smarter and market sharper." },
-              { icon: <PieChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Struggling with overstock or waste?", body: "Inventory optimization tools reduce spoilage and dead stock — critical for food businesses with tight margins." },
+              { icon: <PieChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Struggling with overstock or waste?", body: "Inventory optimization tools reduce spoilage and dead stock — critical for businesses with tight margins." },
               { icon: <TrendingUp className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Missing out on revenue growth?", body: "Predictive analytics surface opportunities before you lose them — peak hours, seasonal trends, staffing gaps." },
             ].map((card, i) => (
               <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.1}>
@@ -59,7 +60,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Integrations — tinted */}
+      {/* Competitor differentiation */}
+      <CompetitorSection />
+
+      {/* Integrations */}
       <section className="w-full py-16 md:py-20 relative overflow-hidden section-alt-1">
         <div className="container px-4 md:px-6">
           <AnimateOnScroll animation="fade">
@@ -105,7 +109,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Industry — white */}
+      {/* Industry */}
       <section className="section-base">
         <IndustryExamples />
       </section>

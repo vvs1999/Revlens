@@ -11,6 +11,7 @@ import { ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp } from "lucide
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
 
 const BLUE = "#0284C7"
+const WEBHOOK = "https://script.google.com/macros/s/AKfycbxuFmaqrNxZaqLVjZcyLuQRyc7a_x23sx_qO4W3uINuJD3rcBklf6ppHw03Zdp7OJdX/exec"
 
 const faqs = [
   { q: "How quickly can I get started?", a: "We're currently onboarding a small group of early operators. Once you apply, we'll reach out within 48 hours to set up a call, connect to your POS, and get your first AI Weekly Digest running — typically within one week." },
@@ -22,25 +23,41 @@ const faqs = [
 ]
 
 export default function ContactPage() {
-  const [formState, setFormState] = useState<"idle" | "submitting" | "success">("idle")
+  const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle")
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [formData, setFormData] = useState({ name: "", email: "", business: "", type: "", message: "" })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormState("submitting")
-    setTimeout(() => {
+    try {
+      await fetch(WEBHOOK, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: "Contact Form",
+          name: formData.name,
+          email: formData.email,
+          businessName: formData.business,
+          businessType: formData.type,
+          message: formData.message,
+        }),
+      })
       setFormState("success")
       setTimeout(() => {
         setFormState("idle")
         setFormData({ name: "", email: "", business: "", type: "", message: "" })
       }, 4000)
-    }, 1500)
+    } catch (_) {
+      setFormState("error")
+      setTimeout(() => setFormState("idle"), 3000)
+    }
   }
 
   return (
@@ -87,6 +104,12 @@ export default function ContactPage() {
                       <p className="text-muted-foreground max-w-sm">
                         We'll get back to you within 24 hours. If it's urgent, email us at{" "}
                         <a href="mailto:hello@revlens.co" className="font-medium hover:underline" style={{ color: BLUE }}>hello@revlens.co</a>
+                      </p>
+                    </div>
+                  ) : formState === "error" ? (
+                    <div className="flex flex-col items-center text-center py-12 space-y-4">
+                      <p className="text-foreground font-semibold">Something went wrong. Please try again or email us at{" "}
+                        <a href="mailto:hello@revlens.co" style={{ color: BLUE }}>hello@revlens.co</a>
                       </p>
                     </div>
                   ) : (
@@ -143,10 +166,7 @@ export default function ContactPage() {
             {/* ── RIGHT: WHAT HAPPENS NEXT + BENEFITS ── */}
             <div className="lg:col-span-2 space-y-5">
               <AnimateOnScroll animation="slide-up" delay={0.1}>
-
-                {/* What happens next */}
-                <div className="rounded-2xl p-6"
-                  style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
+                <div className="rounded-2xl p-6" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}>
                   <h3 className="font-bold text-foreground mb-5">What happens next</h3>
                   <div className="space-y-5">
                     {[
@@ -157,9 +177,7 @@ export default function ContactPage() {
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-4">
                         <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5"
-                          style={{ background: BLUE }}>
-                          {item.step}
-                        </div>
+                          style={{ background: BLUE }}>{item.step}</div>
                         <div>
                           <p className="font-semibold text-sm text-foreground">{item.title}</p>
                           <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{item.desc}</p>
@@ -169,9 +187,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* Founding client benefits */}
-                <div className="rounded-2xl p-6"
-                  style={{ background: `rgba(2,132,199,0.04)`, border: "1px solid rgba(2,132,199,0.15)" }}>
+                <div className="rounded-2xl p-6" style={{ background: "rgba(2,132,199,0.04)", border: "1px solid rgba(2,132,199,0.15)" }}>
                   <h3 className="font-bold text-foreground mb-1">Why reach out early?</h3>
                   <p className="text-xs text-muted-foreground mb-4">We're onboarding a small founding group. Here's what that means for you.</p>
                   <ul className="space-y-3">
@@ -188,7 +204,6 @@ export default function ContactPage() {
                     ))}
                   </ul>
                 </div>
-
               </AnimateOnScroll>
             </div>
 

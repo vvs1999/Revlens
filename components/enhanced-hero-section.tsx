@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { ArrowRight, TrendingUp, Package, Users, AlertCircle, CheckCircle2, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, useMotionValue, useTransform, animate } from "framer-motion"
@@ -69,7 +69,6 @@ function LiveLineChart() {
   })
   const linePath = `M ${pts.join(" L ")}`
   const areaPath = `M 0,${h} L ${pts.join(" L ")} L ${w},${h} Z`
-
   return (
     <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
       <defs>
@@ -102,10 +101,8 @@ function MockDashboard() {
     { label: "Customer Retention", value: 78, prefix: "", suffix: "%", change: "+6%", icon: <Users className="h-3.5 w-3.5" /> },
     { label: "Waste Reduction", value: 64, prefix: "−", suffix: "%", change: "vs last month", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
   ]
-
   return (
     <div className="w-full rounded-2xl overflow-hidden" style={{ background: "rgba(8, 12, 24, 0.98)", border: "1px solid rgba(14, 165, 233, 0.2)", boxShadow: "0 40px 80px rgba(0,0,0,0.4), 0 0 60px rgba(14, 165, 233, 0.08)" }}>
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="flex items-center gap-2">
           <BarChart3 className="h-3.5 w-3.5" style={{ color: "#0EA5E9" }} />
@@ -119,9 +116,7 @@ function MockDashboard() {
           <div className="flex gap-1">{["#ff5f57","#ffbd2e","#28c840"].map((c,i) => <div key={i} className="w-2 h-2 rounded-full" style={{ background: c }} />)}</div>
         </div>
       </div>
-
       <div className="p-4 space-y-3">
-        {/* KPIs */}
         <div className="grid grid-cols-4 gap-2">
           {kpis.map((kpi, i) => (
             <div key={i} className="rounded-xl p-2.5" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -136,10 +131,7 @@ function MockDashboard() {
             </div>
           ))}
         </div>
-
-        {/* Charts row */}
         <div className="grid grid-cols-12 gap-3">
-          {/* Revenue trend with animated line chart */}
           <div className="col-span-7 rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <div className="flex items-center justify-between mb-2">
               <div>
@@ -155,8 +147,6 @@ function MockDashboard() {
               ))}
             </div>
           </div>
-
-          {/* Top items */}
           <div className="col-span-5 rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <div className="text-xs font-semibold text-white mb-2.5">Top Menu Items</div>
             {[{ name: "Grilled Salmon", pct: 92 },{ name: "Caesar Salad", pct: 78 },{ name: "Ribeye Steak", pct: 65 },{ name: "Pasta Primavera", pct: 54 }].map((item, i) => (
@@ -177,8 +167,6 @@ function MockDashboard() {
             ))}
           </div>
         </div>
-
-        {/* Alerts */}
         <div className="rounded-xl p-2.5" style={{ background: "rgba(14, 165, 233, 0.05)", border: "1px solid rgba(14, 165, 233, 0.12)" }}>
           <div className="flex items-center gap-6">
             {[
@@ -225,12 +213,14 @@ export function EnhancedHeroSection() {
             initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}>
 
+            {/* ── UPDATED: badge copy ── */}
             <motion.span className="inline-flex w-fit items-center text-sm font-semibold px-3 py-1 rounded-full"
               style={{ background: pillBg, color: "#0EA5E9", border: `1px solid ${pillBorder}` }}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              Analytics Built for Restaurants & Food Businesses
+              Done-for-You Analytics for Independent Operators
             </motion.span>
 
+            {/* ── H1 unchanged — it's sharp ── */}
             <motion.h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
               style={{ color: headingColor }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
@@ -240,9 +230,11 @@ export function EnhancedHeroSection() {
               </span>
             </motion.h1>
 
+            {/* ── UPDATED: subheading — honest positioning ── */}
             <motion.p className="text-lg leading-relaxed max-w-lg" style={{ color: subColor }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              Connect your POS, CRM, or ERP and turn raw numbers into decisions that grow revenue, cut waste, and optimize labour.
+              We connect to your POS, build your analytics dashboard, and deliver a plain-English summary every Monday.
+              No charts to learn. No analysts to hire. Just answers — and an AI that answers your follow-up questions.
             </motion.p>
 
             <motion.div className="flex flex-col sm:flex-row gap-3"
@@ -253,7 +245,7 @@ export function EnhancedHeroSection() {
                 <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button variant="outline" size="lg" className="btn-secondary h-12 px-7 text-base"
-                onClick={() => (window.location.href = "/services")}>
+                onClick={() => (window.location.href = "/dashboard-demo")}>
                 See How It Works
               </Button>
             </motion.div>
@@ -277,6 +269,7 @@ export function EnhancedHeroSection() {
               style={{ background: "radial-gradient(ellipse at 60% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%)" }} />
             <MockDashboard />
           </motion.div>
+
         </div>
       </div>
     </section>
