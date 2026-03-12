@@ -11,7 +11,7 @@ import { ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp, Calendar } fr
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
 
 const BLUE = "#0284C7"
-const WEBHOOK = "https://script.google.com/macros/s/AKfycby4h3mzNluj2qLpRbbfhECHj0gGmUzIhAGZbAey9P2dZcfaBsxHQpXY5YM-Ic46BZCf/exec"
+const WEBHOOK = "https://script.google.com/macros/s/AKfycby2vXq7QlsOJ0DLkThlhjFxhMTmhmpvU7AxHpcWnvvbB2Azic3fz6H0xJKdqwZuGM4g/exec"
 
 const faqs = [
   { q: "How quickly can I get started?", a: "We're currently onboarding a small group of early operators. Once you apply, we'll reach out within 48 hours to set up a call, connect to your POS, and get your first AI Weekly Digest running — typically within one week." },

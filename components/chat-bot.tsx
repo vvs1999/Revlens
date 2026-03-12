@@ -5,7 +5,7 @@ import { Sparkles, X, Send, Loader2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const BLUE = "#0284C7"
-const WEBHOOK = "https://script.google.com/macros/s/AKfycbxuFmaqrNxZaqLVjZcyLuQRyc7a_x23sx_qO4W3uINuJD3rcBklf6ppHw03Zdp7OJdX/exec"
+const WEBHOOK = "https://script.google.com/macros/s/AKfycby2vXq7QlsOJ0DLkThlhjFxhMTmhmpvU7AxHpcWnvvbB2Azic3fz6H0xJKdqwZuGM4g/exec"
 
 type Step = "intro" | "business_type" | "pain_point" | "name" | "email" | "done"
 
