@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp } from "lucide-react"
+import { ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp, Calendar } from "lucide-react"
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
 
 const BLUE = "#0284C7"
-const WEBHOOK = "https://script.google.com/macros/s/AKfycbxuFmaqrNxZaqLVjZcyLuQRyc7a_x23sx_qO4W3uINuJD3rcBklf6ppHw03Zdp7OJdX/exec"
+const WEBHOOK = "https://script.google.com/macros/s/AKfycby4h3mzNluj2qLpRbbfhECHj0gGmUzIhAGZbAey9P2dZcfaBsxHQpXY5YM-Ic46BZCf/exec"
 
 const faqs = [
   { q: "How quickly can I get started?", a: "We're currently onboarding a small group of early operators. Once you apply, we'll reach out within 48 hours to set up a call, connect to your POS, and get your first AI Weekly Digest running — typically within one week." },
@@ -22,12 +22,37 @@ const faqs = [
   { q: "Is my data secure?", a: "Yes. We use read-only API connections to your POS — we can never make changes to your system. All data is encrypted in transit and at rest. We don't sell or share your data with anyone." },
 ]
 
+const BUSINESS_TYPES = ["Restaurant", "Café", "Retail Store", "Salon", "Other"]
+const TIME_SLOTS = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"]
+
+// Get today + next 14 days as selectable dates
+function getAvailableDates() {
+  const dates: { label: string; value: string }[] = []
+  const today = new Date()
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(today)
+    d.setDate(today.getDate() + i)
+    const day = d.toLocaleDateString("en-US", { weekday: "short" })
+    if (day === "Sun" || day === "Sat") continue // skip weekends
+    dates.push({
+      label: d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }),
+      value: d.toISOString().split("T")[0],
+    })
+  }
+  return dates
+}
+
 export default function ContactPage() {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle")
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [formData, setFormData] = useState({ name: "", email: "", business: "", type: "", message: "" })
+  const [formData, setFormData] = useState({
+    name: "", email: "", business: "", type: "", message: "",
+    preferredDate: "", preferredTime: "",
+  })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const availableDates = getAvailableDates()
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
@@ -35,6 +60,9 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormState("submitting")
+    const preferredTime = formData.preferredDate && formData.preferredTime
+      ? `${formData.preferredDate} at ${formData.preferredTime}`
+      : formData.preferredDate || formData.preferredTime || "Not specified"
     try {
       await fetch(WEBHOOK, {
         method: "POST",
@@ -47,17 +75,26 @@ export default function ContactPage() {
           businessName: formData.business,
           businessType: formData.type,
           message: formData.message,
+          preferredTime,
         }),
       })
       setFormState("success")
       setTimeout(() => {
         setFormState("idle")
-        setFormData({ name: "", email: "", business: "", type: "", message: "" })
-      }, 4000)
+        setFormData({ name: "", email: "", business: "", type: "", message: "", preferredDate: "", preferredTime: "" })
+      }, 5000)
     } catch (_) {
       setFormState("error")
       setTimeout(() => setFormState("idle"), 3000)
     }
+  }
+
+  const selectClass = `w-full h-11 px-3 rounded-md text-sm border bg-transparent transition-colors
+    focus:outline-none focus:ring-2 focus:ring-offset-0`
+  const selectStyle = {
+    borderColor: "hsl(var(--border))",
+    color: "hsl(var(--foreground))",
+    background: "hsl(var(--background))",
   }
 
   return (
@@ -95,6 +132,7 @@ export default function ContactPage() {
               <AnimateOnScroll animation="slide-up">
                 <div className="rounded-2xl p-8"
                   style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", boxShadow: "0 8px 40px rgba(0,0,0,0.06)" }}>
+
                   {formState === "success" ? (
                     <div className="flex flex-col items-center text-center py-12 space-y-4">
                       <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(22,163,74,0.1)" }}>
@@ -116,44 +154,125 @@ export default function ContactPage() {
                     <>
                       <div className="mb-6">
                         <h2 className="text-2xl font-bold text-foreground mb-1">Send a Message</h2>
-                        <p className="text-sm text-muted-foreground">We read every message and respond personally.</p>
+                        <p className="text-sm text-muted-foreground">
+                          We read every message and respond personally.{" "}
+                          <span className="text-red-400">*</span> Required fields.
+                        </p>
                       </div>
+
                       <form onSubmit={handleSubmit}>
                         <div className="space-y-5">
+
+                          {/* Name + Email */}
                           <div className="grid sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <Label htmlFor="name" className="text-sm font-medium">Your Name</Label>
-                              <Input id="name" name="name" placeholder="Alex Johnson" required value={formData.name} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                              <Label htmlFor="name" className="text-sm font-medium">
+                                Your Name <span className="text-red-400">*</span>
+                              </Label>
+                              <Input id="name" name="name" placeholder="Alex Johnson" required
+                                value={formData.name} onChange={handleChange}
+                                disabled={formState !== "idle"} className="h-11" />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
-                              <Input id="email" name="email" type="email" placeholder="alex@yourbusiness.com" required value={formData.email} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                              <Label htmlFor="email" className="text-sm font-medium">
+                                Email Address <span className="text-red-400">*</span>
+                              </Label>
+                              <Input id="email" name="email" type="email" placeholder="alex@yourbusiness.com" required
+                                value={formData.email} onChange={handleChange}
+                                disabled={formState !== "idle"} className="h-11" />
                             </div>
                           </div>
+
+                          {/* Business Name + Type */}
                           <div className="grid sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <Label htmlFor="business" className="text-sm font-medium">Business Name</Label>
-                              <Input id="business" name="business" placeholder="The Corner Café" value={formData.business} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                              <Label htmlFor="business" className="text-sm font-medium">
+                                Business Name <span className="text-red-400">*</span>
+                              </Label>
+                              <Input id="business" name="business" placeholder="The Corner Café" required
+                                value={formData.business} onChange={handleChange}
+                                disabled={formState !== "idle"} className="h-11" />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="type" className="text-sm font-medium">Business Type</Label>
-                              <Input id="type" name="type" placeholder="Café, Restaurant, Retail..." value={formData.type} onChange={handleChange} disabled={formState !== "idle"} className="h-11" />
+                              <Label htmlFor="type" className="text-sm font-medium">
+                                Business Type <span className="text-red-400">*</span>
+                              </Label>
+                              <select id="type" name="type" required
+                                value={formData.type} onChange={handleChange}
+                                disabled={formState !== "idle"}
+                                className={selectClass} style={selectStyle}>
+                                <option value="" disabled>Select type...</option>
+                                {BUSINESS_TYPES.map((t, i) => (
+                                  <option key={i} value={t}>{t}</option>
+                                ))}
+                              </select>
                             </div>
                           </div>
+
+                          {/* Message */}
                           <div className="space-y-2">
-                            <Label htmlFor="message" className="text-sm font-medium">What do you want to know or achieve?</Label>
-                            <Textarea id="message" name="message" rows={5}
+                            <Label htmlFor="message" className="text-sm font-medium">
+                              What do you want to know or achieve? <span className="text-red-400">*</span>
+                            </Label>
+                            <Textarea id="message" name="message" rows={4} required
                               placeholder="Tell us about your business — what decisions are you making blind right now? What would change if you had better data?"
-                              value={formData.message} onChange={handleChange} disabled={formState !== "idle"} />
+                              value={formData.message} onChange={handleChange}
+                              disabled={formState !== "idle"} />
                           </div>
-                          <Button type="submit" className="w-full h-11 font-semibold" style={{ background: BLUE, color: "#ffffff" }} disabled={formState !== "idle"}>
+
+                          {/* Preferred Meeting Time */}
+                          <div className="rounded-xl p-4 space-y-3"
+                            style={{ background: "rgba(2,132,199,0.04)", border: "1px solid rgba(2,132,199,0.15)" }}>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4" style={{ color: BLUE }} />
+                              <Label className="text-sm font-semibold" style={{ color: BLUE }}>
+                                Preferred Call Time <span className="text-muted-foreground font-normal">(optional)</span>
+                              </Label>
+                            </div>
+                            <div className="grid sm:grid-cols-2 gap-3">
+                              <div className="space-y-1.5">
+                                <Label className="text-xs text-muted-foreground">Date</Label>
+                                <select name="preferredDate"
+                                  value={formData.preferredDate} onChange={handleChange}
+                                  disabled={formState !== "idle"}
+                                  className={selectClass} style={selectStyle}>
+                                  <option value="">Pick a date...</option>
+                                  {availableDates.map((d, i) => (
+                                    <option key={i} value={d.value}>{d.label}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-xs text-muted-foreground">Time (EST)</Label>
+                                <select name="preferredTime"
+                                  value={formData.preferredTime} onChange={handleChange}
+                                  disabled={formState !== "idle"}
+                                  className={selectClass} style={selectStyle}>
+                                  <option value="">Pick a time...</option>
+                                  {TIME_SLOTS.map((t, i) => (
+                                    <option key={i} value={t}>{t}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              We'll do our best to match your preferred time. All times in EST.
+                            </p>
+                          </div>
+
+                          <Button type="submit" className="w-full h-11 font-semibold"
+                            style={{ background: BLUE, color: "#ffffff" }}
+                            disabled={formState !== "idle"}>
                             {formState === "submitting"
                               ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</>
                               : <>Send Message <ArrowRight className="ml-2 h-4 w-4" /></>}
                           </Button>
+
                           <p className="text-xs text-center text-muted-foreground">
                             Prefer email?{" "}
-                            <a href="mailto:hello@revlens.co" className="font-medium hover:underline" style={{ color: BLUE }}>hello@revlens.co</a>
+                            <a href="mailto:hello@revlens.co" className="font-medium hover:underline" style={{ color: BLUE }}>
+                              hello@revlens.co
+                            </a>
                           </p>
                         </div>
                       </form>
@@ -224,9 +343,12 @@ export default function ContactPage() {
             {faqs.map((faq, i) => (
               <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.05}>
                 <div className="rounded-xl overflow-hidden" style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}>
-                  <button className="w-full flex items-center justify-between p-5 text-left" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  <button className="w-full flex items-center justify-between p-5 text-left"
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                     <span className="font-semibold text-foreground pr-4">{faq.q}</span>
-                    {openFaq === i ? <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                    {openFaq === i
+                      ? <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      : <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />}
                   </button>
                   {openFaq === i && (
                     <div className="px-5 pb-5">
@@ -250,10 +372,13 @@ export default function ContactPage() {
                 Take 5 minutes with the interactive demo before reaching out. Switch business types, explore the AI Weekly Digest, and see exactly what RevLens would look like with your data.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button style={{ background: "#ffffff", color: BLUE, fontWeight: 600 }} onClick={() => window.location.href = "/dashboard-demo"}>
+                <Button style={{ background: "#ffffff", color: BLUE, fontWeight: 600 }}
+                  onClick={() => window.location.href = "/dashboard-demo"}>
                   View Demo <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button variant="outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", background: "transparent" }} onClick={() => window.location.href = "/services"}>
+                <Button variant="outline"
+                  style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", background: "transparent" }}
+                  onClick={() => window.location.href = "/services"}>
                   See Pricing
                 </Button>
               </div>
