@@ -225,15 +225,28 @@ export default function DashboardDemoPage() {
             <div className="flex flex-col items-center text-center space-y-5 max-w-3xl mx-auto">
               <span className="inline-block text-sm font-semibold px-3 py-1 rounded-full"
                 style={{ background: "rgba(14,165,233,0.1)", color: "#0EA5E9", border: "1px solid rgba(14,165,233,0.2)" }}>
-                Dashboard Demo
+                Live Product Demo
               </span>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-foreground">
-                See RevLens <span className="gradient-text">In Action</span>
+                This Is What Your <span className="gradient-text">Monday Mornings</span> Look Like
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl">
-                Explore your analytics dashboard and AI-powered weekly digest — select your business type and see what RevLens looks like with your data.
+                Real insights. Real actions. Select your business type below and explore the exact dashboard and weekly digest your team would receive — built from your own POS data.
               </p>
-              <div className="flex gap-3">
+              {/* Trust signals */}
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 pt-1">
+                {[
+                  { icon: <CheckCircle className="h-4 w-4" />, text: "Sample data — see it before you commit" },
+                  { icon: <Zap className="h-4 w-4" />, text: "Live in 48 hours" },
+                  { icon: <Star className="h-4 w-4" />, text: "No analysts needed" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <span style={{ color: "#0EA5E9" }}>{item.icon}</span>
+                    {item.text}
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-3 pt-1">
                 <Button className="btn-primary h-11 px-6" onClick={() => window.location.href = "/contact"}>
                   Book a Live Demo <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

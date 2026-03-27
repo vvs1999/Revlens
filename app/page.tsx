@@ -8,7 +8,7 @@ import { ChatBot } from "@/components/chat-bot"
 import { MarqueeBanner } from "@/components/marquee-banner"
 import { CompetitorSection } from "@/components/competitor-section"
 import Link from "next/link"
-import { ArrowRight, LineChart, PieChart, TrendingUp, Plug, Clock, ShieldCheck } from "lucide-react"
+import { ArrowRight, LineChart, PieChart, TrendingUp, Plug, Clock, ShieldCheck, BarChart3 } from "lucide-react"
 
 const integrationCategories = [
   { label: "POS Systems", items: ["Square", "Toast", "Lightspeed", "Clover"], color: "#0EA5E9" },
@@ -21,6 +21,72 @@ export default function Home() {
     <PageLayout>
       <EnhancedHeroSection />
       <MarqueeBanner />
+
+      {/* How It Works */}
+      <section className="w-full py-16 md:py-24 section-alt-1">
+        <div className="container px-4 md:px-6">
+          <AnimateOnScroll animation="fade">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
+              <span className="inline-block text-sm font-semibold px-3 py-1 rounded-full"
+                style={{ background: "rgba(14, 165, 233, 0.1)", color: "#0EA5E9", border: "1px solid rgba(14, 165, 233, 0.2)" }}>
+                How It Works
+              </span>
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-foreground">
+                Up and Running in 48 Hours
+              </h2>
+              <p className="max-w-[600px] text-muted-foreground md:text-lg">
+                No IT team. No setup headaches. Three steps and you get insights every Monday morning.
+              </p>
+            </div>
+          </AnimateOnScroll>
+
+          <div className="relative max-w-4xl mx-auto">
+            {/* Connector line (desktop only) */}
+            <div className="absolute top-10 left-[16%] right-[16%] h-px hidden md:block"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(14,165,233,0.35) 20%, rgba(14,165,233,0.35) 80%, transparent)" }} />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                {
+                  step: "1",
+                  icon: <Plug className="h-6 w-6" />,
+                  title: "Connect Your POS",
+                  body: "We integrate directly with Square, Toast, Lightspeed, and more. Fully automated — no exports, no manual uploads, no IT required.",
+                },
+                {
+                  step: "2",
+                  icon: <BarChart3 className="h-6 w-6" />,
+                  title: "We Build Your Dashboard",
+                  body: "Our team configures a custom analytics setup in 48 hours, tracking the metrics that actually matter for your business type.",
+                },
+                {
+                  step: "3",
+                  icon: <Clock className="h-6 w-6" />,
+                  title: "Monday Insights, Every Week",
+                  body: "Every Monday you get a plain-English summary: your top win, one alert, and one action to take. No charts to decode.",
+                },
+              ].map((s, i) => (
+                <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.15}>
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="relative">
+                      <div className="w-20 h-20 rounded-2xl flex items-center justify-center"
+                        style={{ background: "rgba(14, 165, 233, 0.1)", border: "1px solid rgba(14, 165, 233, 0.2)" }}>
+                        <span style={{ color: "#0EA5E9" }}>{s.icon}</span>
+                      </div>
+                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                        style={{ background: "#0EA5E9" }}>
+                        {s.step}
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground">{s.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{s.body}</p>
+                  </div>
+                </AnimateOnScroll>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Challenges */}
       <section className="w-full py-16 md:py-24 lg:py-32 section-base">

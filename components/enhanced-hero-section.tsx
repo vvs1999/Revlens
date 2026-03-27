@@ -260,13 +260,55 @@ export function EnhancedHeroSection() {
                 </span>
               ))}
             </motion.div>
+
+            {/* Social proof stats */}
+            <motion.div
+              className="flex flex-wrap items-center gap-x-6 gap-y-1 pt-4"
+              style={{ borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(14,165,233,0.12)"}` }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
+              {[
+                { value: "20+", label: "businesses" },
+                { value: "48h", label: "avg. setup" },
+                { value: "4.9★", label: "avg. rating" },
+              ].map((s, i) => (
+                <div key={i} className="flex items-baseline gap-1.5">
+                  <span className="text-lg font-bold" style={{ color: "#0EA5E9" }}>{s.value}</span>
+                  <span className="text-sm" style={{ color: subColor }}>{s.label}</span>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
 
           <motion.div className="relative"
             initial={{ opacity: 0, x: 24, scale: 0.97 }} animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}>
-            <div className="absolute -inset-4 rounded-3xl pointer-events-none"
-              style={{ background: "radial-gradient(ellipse at 60% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%)" }} />
+
+            {/* Stronger glow behind dashboard */}
+            <div className="absolute -inset-6 rounded-3xl pointer-events-none"
+              style={{ background: "radial-gradient(ellipse at 60% 50%, rgba(14, 165, 233, 0.18) 0%, transparent 65%)" }} />
+
+            {/* Floating badge — top right */}
+            <motion.div
+              className="absolute -top-4 -right-3 z-20 hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
+              style={{ background: "linear-gradient(135deg, #16a34a, #22c55e)", color: "white", boxShadow: "0 8px 20px rgba(22,163,74,0.4)", whiteSpace: "nowrap" }}
+              initial={{ opacity: 0, y: -12, scale: 0.85 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 1.3, type: "spring", stiffness: 200 }}>
+              <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+              Monday Report Delivered ✓
+            </motion.div>
+
+            {/* Floating badge — bottom left */}
+            <motion.div
+              className="absolute -bottom-4 -left-3 z-20 hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
+              style={{ background: isDark ? "rgba(14,165,233,0.92)" : "#0EA5E9", color: "white", boxShadow: "0 8px 20px rgba(14,165,233,0.4)", whiteSpace: "nowrap" }}
+              initial={{ opacity: 0, y: 12, scale: 0.85 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 1.6, type: "spring", stiffness: 200 }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />
+              Square · Live Sync Active
+            </motion.div>
+
             <MockDashboard />
           </motion.div>
 
