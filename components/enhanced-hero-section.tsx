@@ -261,22 +261,6 @@ export function EnhancedHeroSection() {
               ))}
             </motion.div>
 
-            {/* Social proof stats */}
-            <motion.div
-              className="flex flex-wrap items-center gap-x-6 gap-y-1 pt-4"
-              style={{ borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(14,165,233,0.12)"}` }}
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
-              {[
-                { value: "20+", label: "businesses" },
-                { value: "48h", label: "avg. setup" },
-                { value: "4.9★", label: "avg. rating" },
-              ].map((s, i) => (
-                <div key={i} className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold" style={{ color: "#0EA5E9" }}>{s.value}</span>
-                  <span className="text-sm" style={{ color: subColor }}>{s.label}</span>
-                </div>
-              ))}
-            </motion.div>
           </motion.div>
 
           <motion.div className="relative"

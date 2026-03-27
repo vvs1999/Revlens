@@ -26,7 +26,7 @@ export default function Home() {
       <section className="w-full py-16 md:py-24 section-alt-1">
         <div className="container px-4 md:px-6">
           <AnimateOnScroll animation="fade">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-14">
               <span className="inline-block text-sm font-semibold px-3 py-1 rounded-full"
                 style={{ background: "rgba(14, 165, 233, 0.1)", color: "#0EA5E9", border: "1px solid rgba(14, 165, 233, 0.2)" }}>
                 How It Works
@@ -40,46 +40,59 @@ export default function Home() {
             </div>
           </AnimateOnScroll>
 
-          <div className="relative max-w-4xl mx-auto">
-            {/* Connector line (desktop only) */}
-            <div className="absolute top-10 left-[16%] right-[16%] h-px hidden md:block"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(14,165,233,0.35) 20%, rgba(14,165,233,0.35) 80%, transparent)" }} />
+          <div className="relative max-w-5xl mx-auto">
+            {/* Connector line between cards (desktop only) */}
+            <div className="absolute top-[72px] left-[20%] right-[20%] hidden md:flex items-center justify-between z-0">
+              <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(14,165,233,0.15), rgba(14,165,233,0.35))" }} />
+              <ArrowRight className="h-4 w-4 mx-1 flex-shrink-0" style={{ color: "rgba(14,165,233,0.4)" }} />
+              <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(14,165,233,0.35), rgba(14,165,233,0.15))" }} />
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {[
                 {
                   step: "1",
-                  icon: <Plug className="h-6 w-6" />,
+                  icon: <Plug className="h-7 w-7" />,
                   title: "Connect Your POS",
                   body: "We integrate directly with Square, Toast, Lightspeed, and more. Fully automated — no exports, no manual uploads, no IT required.",
+                  detail: "Setup takes under 15 minutes",
                 },
                 {
                   step: "2",
-                  icon: <BarChart3 className="h-6 w-6" />,
+                  icon: <BarChart3 className="h-7 w-7" />,
                   title: "We Build Your Dashboard",
-                  body: "Our team configures a custom analytics setup in 48 hours, tracking the metrics that actually matter for your business type.",
+                  body: "Our team configures a custom analytics setup within 48 hours, tracking the metrics that actually matter for your business type.",
+                  detail: "Tailored to your industry",
                 },
                 {
                   step: "3",
-                  icon: <Clock className="h-6 w-6" />,
+                  icon: <Clock className="h-7 w-7" />,
                   title: "Monday Insights, Every Week",
                   body: "Every Monday you get a plain-English summary: your top win, one alert, and one action to take. No charts to decode.",
+                  detail: "AI-powered, human-readable",
                 },
               ].map((s, i) => (
                 <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.15}>
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="relative">
-                      <div className="w-20 h-20 rounded-2xl flex items-center justify-center"
-                        style={{ background: "rgba(14, 165, 233, 0.1)", border: "1px solid rgba(14, 165, 233, 0.2)" }}>
-                        <span style={{ color: "#0EA5E9" }}>{s.icon}</span>
-                      </div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                        style={{ background: "#0EA5E9" }}>
-                        {s.step}
-                      </div>
+                  <div className="enhanced-card relative p-8 flex flex-col items-center text-center space-y-4 h-full">
+                    {/* Step number */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white z-10"
+                      style={{ background: "linear-gradient(135deg, #0EA5E9, #0284C7)", boxShadow: "0 4px 12px rgba(14,165,233,0.35)" }}>
+                      {s.step}
+                    </div>
+                    {/* Icon */}
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mt-2"
+                      style={{ background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.15)" }}>
+                      <span style={{ color: "#0EA5E9" }}>{s.icon}</span>
                     </div>
                     <h3 className="text-xl font-bold text-foreground">{s.title}</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">{s.body}</p>
+                    {/* Bottom detail tag */}
+                    <div className="mt-auto pt-3">
+                      <span className="text-xs font-medium px-3 py-1 rounded-full"
+                        style={{ background: "rgba(14, 165, 233, 0.06)", color: "#0EA5E9", border: "1px solid rgba(14, 165, 233, 0.12)" }}>
+                        {s.detail}
+                      </span>
+                    </div>
                   </div>
                 </AnimateOnScroll>
               ))}

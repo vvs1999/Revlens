@@ -302,73 +302,89 @@ export default function DashboardDemoPage() {
             {/* ══ YOUR DASHBOARD TAB ══ */}
             {mainTab === "dashboard" && (
               <motion.div key="dashboard" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}>
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", boxShadow: "0 8px 40px rgba(0,0,0,0.06)" }}>
+                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", boxShadow: "0 12px 48px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)" }}>
 
-                  {/* Header */}
-                  <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: "hsl(var(--border))" }}>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg" style={{ background: "rgba(14,165,233,0.1)", color: BLUE }}>
-                        {businessCategories.find(c => c.id === category)?.icon}
+                  {/* Header with gradient accent */}
+                  <div className="relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-[0.03]" style={{ background: "linear-gradient(135deg, #0EA5E9, #0284C7)" }} />
+                    <div className="relative flex items-center justify-between p-6 border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                      <div className="flex items-center gap-4">
+                        <div className="p-2.5 rounded-xl" style={{ background: "rgba(14,165,233,0.1)", color: BLUE, border: "1px solid rgba(14,165,233,0.15)" }}>
+                          {businessCategories.find(c => c.id === category)?.icon}
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-bold text-foreground">{businessCategories.find(c => c.id === category)?.label} Analytics</h2>
+                          <p className="text-xs text-muted-foreground">Sample data — Feb 2025</p>
+                        </div>
                       </div>
-                      <div>
-                        <h2 className="font-bold text-foreground">{businessCategories.find(c => c.id === category)?.label} Analytics</h2>
-                        <p className="text-xs text-muted-foreground">Sample data — Feb 2025</p>
+                      <div className="flex items-center gap-3">
+                        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium" style={{ background: "rgba(22,163,74,0.08)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.15)" }}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                          Live Preview
+                        </div>
+                        <Button variant="outline" size="sm" className="btn-secondary hidden md:flex">
+                          <Download className="mr-2 h-4 w-4" /> Export
+                        </Button>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" className="btn-secondary hidden md:flex">
-                      <Download className="mr-2 h-4 w-4" /> Export
-                    </Button>
                   </div>
 
-                  {/* Metrics */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                  {/* KPI Metrics with accent borders */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b" style={{ borderColor: "hsl(var(--border))" }}>
                     {[
-                      { label: "Revenue",                                                            value: metrics.revenue.value,   change: metrics.revenue.change,   icon: <DollarSign className="h-4 w-4" /> },
-                      { label: "Customers",                                                          value: metrics.customers.value, change: metrics.customers.change, icon: <Users className="h-4 w-4" />     },
-                      { label: category === "salon" ? "Appointments" : "Orders",                    value: metrics.orders.value,    change: metrics.orders.change,    icon: category === "salon" ? <Calendar className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" /> },
-                      { label: category === "salon" ? "Avg. Service"  : "Avg. Order",               value: metrics.avgOrder.value,  change: metrics.avgOrder.change,  icon: <DollarSign className="h-4 w-4" /> },
+                      { label: "Revenue",                                                            value: metrics.revenue.value,   change: metrics.revenue.change,   icon: <DollarSign className="h-4 w-4" />, accent: "#0EA5E9" },
+                      { label: "Customers",                                                          value: metrics.customers.value, change: metrics.customers.change, icon: <Users className="h-4 w-4" />,      accent: "#8B5CF6" },
+                      { label: category === "salon" ? "Appointments" : "Orders",                    value: metrics.orders.value,    change: metrics.orders.change,    icon: category === "salon" ? <Calendar className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />, accent: "#F59E0B" },
+                      { label: category === "salon" ? "Avg. Service"  : "Avg. Order",               value: metrics.avgOrder.value,  change: metrics.avgOrder.change,  icon: <DollarSign className="h-4 w-4" />, accent: "#10B981" },
                     ].map((m, i) => (
                       <motion.div key={`${category}-${i}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-                        className="rounded-xl p-4" style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
-                        <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs text-muted-foreground">{m.label}</p>
-                          <div className="p-1.5 rounded-lg" style={{ background: "rgba(14,165,233,0.1)", color: BLUE }}>{m.icon}</div>
+                        className="relative rounded-xl p-4 overflow-hidden transition-shadow hover:shadow-md"
+                        style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                        <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: m.accent }} />
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-xs font-medium text-muted-foreground">{m.label}</p>
+                          <div className="p-1.5 rounded-lg" style={{ background: `${m.accent}12`, color: m.accent }}>{m.icon}</div>
                         </div>
-                        <p className="text-2xl font-bold text-foreground">{m.value}</p>
-                        <p className="text-xs text-green-500 flex items-center gap-1 mt-1">
-                          <TrendingUp className="h-3 w-3" /> {m.change} vs last month
-                        </p>
+                        <p className="text-2xl font-bold text-foreground tracking-tight">{m.value}</p>
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(22,163,74,0.08)", color: "#16A34A" }}>
+                            <TrendingUp className="h-3 w-3" />{m.change}
+                          </span>
+                          <span className="text-xs text-muted-foreground">vs last month</span>
+                        </div>
                       </motion.div>
                     ))}
                   </div>
 
-                  {/* Chart tabs */}
-                  <div className="flex border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                  {/* Chart tabs — pill style */}
+                  <div className="flex gap-1 p-3 border-b" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}>
                     {(["overview", "sales", "customers"] as ChartTab[]).map((tab) => (
                       <button key={tab} onClick={() => setChartTab(tab)}
-                        className="relative px-6 py-3 text-sm font-medium transition-colors"
-                        style={{ color: chartTab === tab ? BLUE : "hsl(var(--muted-foreground))" }}>
+                        className="relative px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                        style={chartTab === tab
+                          ? { background: BLUE, color: "#ffffff", boxShadow: "0 2px 8px rgba(2,132,199,0.3)" }
+                          : { color: "hsl(var(--muted-foreground))" }}>
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        {chartTab === tab && (
-                          <motion.div layoutId="chartTabLine" className="absolute bottom-0 left-0 right-0 h-0.5"
-                            style={{ background: BLUE }} initial={false} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
-                        )}
                       </button>
                     ))}
                   </div>
 
-                  {/* Charts */}
-                  <div className="p-5">
+                  {/* Charts — enhanced containers */}
+                  <div className="p-6">
                     {mounted && (
                       <motion.div key={`${category}-${chartTab}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid md:grid-cols-2 gap-5">
                           {charts[chartTab].map((chart, i) => (
-                            <div key={i} className="rounded-xl overflow-hidden" style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }}>
-                              <div className="px-4 pt-4 pb-2">
-                                <p className="font-semibold text-sm text-foreground">{chart.title}</p>
-                                <p className="text-xs text-muted-foreground">{chart.description}</p>
+                            <div key={i} className="rounded-xl overflow-hidden transition-shadow hover:shadow-md"
+                              style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }}>
+                              <div className="px-5 pt-4 pb-2 flex items-start justify-between">
+                                <div>
+                                  <p className="font-semibold text-sm text-foreground">{chart.title}</p>
+                                  <p className="text-xs text-muted-foreground mt-0.5">{chart.description}</p>
+                                </div>
+                                <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: BLUE }} />
                               </div>
-                              <div className="w-full h-[220px] p-3">{chart.chart}</div>
+                              <div className="w-full h-[220px] px-4 pb-4 pt-1">{chart.chart}</div>
                             </div>
                           ))}
                         </div>
@@ -377,9 +393,9 @@ export default function DashboardDemoPage() {
                   </div>
 
                   {/* Footer */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 border-t" style={{ borderColor: "hsl(var(--border))" }}>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-t" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}>
                     <p className="text-xs text-muted-foreground">Demo dashboard — in the full version all charts connect to your real POS data.</p>
-                    <Button style={{ background: BLUE, color: "#ffffff", fontWeight: 600 }} onClick={() => window.location.href = "/contact"}>
+                    <Button style={{ background: BLUE, color: "#ffffff", fontWeight: 600 }} className="shadow-lg" onClick={() => window.location.href = "/contact"}>
                       Book a Live Demo <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
