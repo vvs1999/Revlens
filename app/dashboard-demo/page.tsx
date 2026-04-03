@@ -16,14 +16,7 @@ interface KPI { label: string; current: string; prev: string; delta: string; up:
 interface Win { metric: string; value: string; detail: string; icon: string }
 interface Alert { label: string; severity: string; detail: string; action: string }
 
-// ─── CHART COLOR ACCENTS (per chart type for the accent bar) ─────
-const ACCENT = {
-  primary: "#0EA5E9",
-  violet: "#8B5CF6",
-  emerald: "#10B981",
-  amber: "#F59E0B",
-  rose: "#F43F5E",
-}
+const BLUE = "#0284C7"
 
 // ─── DATA ─────────────────────────────────────────────────────────
 const metricsData: Record<Category, { revenue: { value: string; change: string }; customers: { value: string; change: string }; orders: { value: string; change: string }; avgOrder: { value: string; change: string } }> = {
@@ -33,7 +26,7 @@ const metricsData: Record<Category, { revenue: { value: string; change: string }
   salon:      { revenue: { value: "$31,200", change: "+12%" }, customers: { value: "420", change: "+9%" }, orders: { value: "840", change: "+14%" }, avgOrder: { value: "$75.50", change: "+6%" } },
 }
 
-// sparkline data for KPI cards (7-point mini trends)
+// sparkline data for KPI cards
 const sparklines: Record<Category, number[][]> = {
   cafe:       [[18,20,19,22,21,23,24.5], [1.1,1.12,1.15,1.18,1.2,1.22,1.25], [2.8,3.0,3.1,3.2,3.3,3.4,3.45], [28,29,30,30.5,31,31.8,32.5]],
   retail:     [[65,68,70,72,74,76,78.9], [2.2,2.3,2.4,2.5,2.6,2.7,2.78], [3.5,3.6,3.7,3.8,3.9,4.0,4.12], [42,43,43.5,44,44.5,45,45.75]],
@@ -41,80 +34,79 @@ const sparklines: Record<Category, number[][]> = {
   salon:      [[24,25,26,27,28,29.5,31.2], [0.36,0.37,0.38,0.39,0.4,0.41,0.42], [0.7,0.72,0.74,0.76,0.78,0.82,0.84], [68,69,70,71,72,74,75.5]],
 }
 
-// Each chart entry now carries an accent color key and a "featured" flag for bento sizing
-interface ChartEntry { title: string; description: string; chart: React.ReactNode; accent: string; featured?: boolean }
+interface ChartEntry { title: string; description: string; chart: React.ReactNode; featured?: boolean }
 
 const categoryCharts: Record<Category, Record<ChartTab, ChartEntry[]>> = {
   cafe: {
     overview: [
-      { title: "Peak Hours Analysis",          description: "Customer traffic by hour of day", chart: <HeatMapChart category="cafe" />,            accent: ACCENT.rose,    featured: true },
-      { title: "Product Category Performance", description: "Sales by product category",       chart: <StandardBarChart category="cafe" />,         accent: ACCENT.violet },
-      { title: "Revenue Trends",               description: "Monthly revenue over time",       chart: <RevenueTrendChart category="cafe" />,        accent: ACCENT.primary, featured: true },
-      { title: "Customer Segments",            description: "Distribution by customer type",   chart: <CustomerSegmentChart category="cafe" />,     accent: ACCENT.emerald },
+      { title: "Peak Hours Analysis",          description: "Customer traffic by hour of day", chart: <HeatMapChart category="cafe" />,        featured: true },
+      { title: "Product Category Performance", description: "Sales by product category",       chart: <StandardBarChart category="cafe" /> },
+      { title: "Revenue Trends",               description: "Monthly revenue over time",       chart: <RevenueTrendChart category="cafe" />,   featured: true },
+      { title: "Customer Segments",            description: "Distribution by customer type",   chart: <CustomerSegmentChart category="cafe" /> },
     ],
     sales: [
-      { title: "Location Performance", description: "Revenue by location",        chart: <LocationMapChart category="cafe" />,  accent: ACCENT.primary, featured: true },
-      { title: "Customer Journey",     description: "From awareness to purchase", chart: <FunnelChart category="cafe" />,       accent: ACCENT.violet },
-      { title: "Sales by Time of Day", description: "Hourly sales distribution",  chart: <HourlyBarChart category="cafe" />,    accent: ACCENT.amber },
+      { title: "Location Performance", description: "Revenue by location",        chart: <LocationMapChart category="cafe" />, featured: true },
+      { title: "Customer Journey",     description: "From awareness to purchase", chart: <FunnelChart category="cafe" /> },
+      { title: "Sales by Time of Day", description: "Hourly sales distribution",  chart: <HourlyBarChart category="cafe" /> },
     ],
     customers: [
-      { title: "Customer Segments",   description: "By visit frequency and spend", chart: <BubbleChart category="cafe" />,       accent: ACCENT.primary, featured: true },
-      { title: "Loyalty & Retention", description: "Engagement over 6 months",     chart: <CalendarHeatmap category="cafe" />,   accent: ACCENT.emerald },
-      { title: "Satisfaction Scores", description: "vs industry benchmark",         chart: <RadarChart category="cafe" />,        accent: ACCENT.violet },
+      { title: "Customer Segments",   description: "By visit frequency and spend", chart: <BubbleChart category="cafe" />,     featured: true },
+      { title: "Loyalty & Retention", description: "Engagement over 6 months",     chart: <CalendarHeatmap category="cafe" /> },
+      { title: "Satisfaction Scores", description: "vs industry benchmark",         chart: <RadarChart category="cafe" /> },
     ],
   },
   retail: {
     overview: [
-      { title: "Store Performance Map",  description: "Revenue by location",           chart: <LocationMapChart category="retail" />,     accent: ACCENT.primary, featured: true },
-      { title: "Department Performance", description: "Sales by department",            chart: <StandardBarChart category="retail" />,     accent: ACCENT.violet },
-      { title: "Revenue Trends",         description: "Monthly revenue over time",     chart: <RevenueTrendChart category="retail" />,    accent: ACCENT.emerald, featured: true },
-      { title: "Customer Segments",      description: "Distribution by customer type", chart: <CustomerSegmentChart category="retail" />, accent: ACCENT.amber },
+      { title: "Store Performance Map",  description: "Revenue by location",           chart: <LocationMapChart category="retail" />,     featured: true },
+      { title: "Department Performance", description: "Sales by department",            chart: <StandardBarChart category="retail" /> },
+      { title: "Revenue Trends",         description: "Monthly revenue over time",     chart: <RevenueTrendChart category="retail" />,    featured: true },
+      { title: "Customer Segments",      description: "Distribution by customer type", chart: <CustomerSegmentChart category="retail" /> },
     ],
     sales: [
-      { title: "Seasonal Sales Patterns", description: "Monthly activity heatmap", chart: <CalendarHeatmap category="retail" />, accent: ACCENT.rose,    featured: true },
-      { title: "Product Performance",     description: "By margin and volume",     chart: <BubbleChart category="retail" />,     accent: ACCENT.primary },
-      { title: "Sales by Time of Day",    description: "Hourly distribution",      chart: <HourlyBarChart category="retail" />,  accent: ACCENT.amber },
+      { title: "Seasonal Sales Patterns", description: "Monthly activity heatmap", chart: <CalendarHeatmap category="retail" />, featured: true },
+      { title: "Product Performance",     description: "By margin and volume",     chart: <BubbleChart category="retail" /> },
+      { title: "Sales by Time of Day",    description: "Hourly distribution",      chart: <HourlyBarChart category="retail" /> },
     ],
     customers: [
-      { title: "Customer Acquisition", description: "From prospect to loyal",  chart: <FunnelChart category="retail" />,                accent: ACCENT.violet,  featured: true },
-      { title: "Satisfaction Metrics",  description: "vs industry benchmark",   chart: <RadarChart category="retail" />,                 accent: ACCENT.primary },
-      { title: "Department Revenue",    description: "By category",             chart: <StandardHorizontalBarChart category="retail" />, accent: ACCENT.emerald },
+      { title: "Customer Acquisition", description: "From prospect to loyal",  chart: <FunnelChart category="retail" />,                featured: true },
+      { title: "Satisfaction Metrics",  description: "vs industry benchmark",   chart: <RadarChart category="retail" /> },
+      { title: "Department Revenue",    description: "By category",             chart: <StandardHorizontalBarChart category="retail" /> },
     ],
   },
   restaurant: {
     overview: [
-      { title: "Table Turnover Analysis", description: "Efficiency by day and time",      chart: <HeatMapChart category="restaurant" />,        accent: ACCENT.rose,    featured: true },
-      { title: "Menu Item Performance",   description: "By popularity and margin",        chart: <BubbleChart category="restaurant" />,         accent: ACCENT.primary },
-      { title: "Revenue Trends",          description: "Monthly revenue over time",       chart: <RevenueTrendChart category="restaurant" />,   accent: ACCENT.emerald, featured: true },
-      { title: "Customer Segments",       description: "Distribution by customer type",   chart: <CustomerSegmentChart category="restaurant" />,accent: ACCENT.amber },
+      { title: "Table Turnover Analysis", description: "Efficiency by day and time",      chart: <HeatMapChart category="restaurant" />,        featured: true },
+      { title: "Menu Item Performance",   description: "By popularity and margin",        chart: <BubbleChart category="restaurant" /> },
+      { title: "Revenue Trends",          description: "Monthly revenue over time",       chart: <RevenueTrendChart category="restaurant" />,   featured: true },
+      { title: "Customer Segments",       description: "Distribution by customer type",   chart: <CustomerSegmentChart category="restaurant" /> },
     ],
     sales: [
-      { title: "Location Comparison",  description: "Performance across locations",   chart: <LocationMapChart category="restaurant" />,    accent: ACCENT.primary, featured: true },
-      { title: "Sales by Channel",     description: "Dine-in vs takeout vs delivery", chart: <StandardBarChart category="restaurant" />,    accent: ACCENT.violet },
-      { title: "Sales by Time of Day", description: "Hourly distribution",            chart: <HourlyBarChart category="restaurant" />,     accent: ACCENT.amber },
+      { title: "Location Comparison",  description: "Performance across locations",   chart: <LocationMapChart category="restaurant" />,  featured: true },
+      { title: "Sales by Channel",     description: "Dine-in vs takeout vs delivery", chart: <StandardBarChart category="restaurant" /> },
+      { title: "Sales by Time of Day", description: "Hourly distribution",            chart: <HourlyBarChart category="restaurant" /> },
     ],
     customers: [
-      { title: "Reservation Patterns", description: "By day and party size",    chart: <CalendarHeatmap category="restaurant" />,             accent: ACCENT.emerald, featured: true },
-      { title: "Satisfaction Metrics",  description: "vs industry benchmark",    chart: <RadarChart category="restaurant" />,                  accent: ACCENT.primary },
-      { title: "Customer Loyalty",      description: "Return visit frequency",   chart: <StandardHorizontalBarChart category="restaurant" />, accent: ACCENT.violet },
+      { title: "Reservation Patterns", description: "By day and party size",    chart: <CalendarHeatmap category="restaurant" />,             featured: true },
+      { title: "Satisfaction Metrics",  description: "vs industry benchmark",    chart: <RadarChart category="restaurant" /> },
+      { title: "Customer Loyalty",      description: "Return visit frequency",   chart: <StandardHorizontalBarChart category="restaurant" /> },
     ],
   },
   salon: {
     overview: [
-      { title: "Service Popularity",  description: "By volume and revenue",          chart: <BubbleChart category="salon" />,                accent: ACCENT.primary, featured: true },
-      { title: "Stylist Performance", description: "By revenue and satisfaction",    chart: <StandardHorizontalBarChart category="salon" />, accent: ACCENT.violet },
-      { title: "Revenue Trends",      description: "Monthly revenue over time",      chart: <RevenueTrendChart category="salon" />,          accent: ACCENT.emerald, featured: true },
-      { title: "Customer Segments",   description: "Distribution by customer type", chart: <CustomerSegmentChart category="salon" />,       accent: ACCENT.amber },
+      { title: "Service Popularity",  description: "By volume and revenue",          chart: <BubbleChart category="salon" />,                featured: true },
+      { title: "Stylist Performance", description: "By revenue and satisfaction",    chart: <StandardHorizontalBarChart category="salon" /> },
+      { title: "Revenue Trends",      description: "Monthly revenue over time",      chart: <RevenueTrendChart category="salon" />,          featured: true },
+      { title: "Customer Segments",   description: "Distribution by customer type", chart: <CustomerSegmentChart category="salon" /> },
     ],
     sales: [
-      { title: "Appointment Density",  description: "By day and time slot", chart: <HeatMapChart category="salon" />,       accent: ACCENT.rose,    featured: true },
-      { title: "Location Performance", description: "Revenue by location",  chart: <LocationMapChart category="salon" />,   accent: ACCENT.primary },
-      { title: "Sales by Time of Day", description: "Hourly distribution",  chart: <HourlyBarChart category="salon" />,     accent: ACCENT.amber },
+      { title: "Appointment Density",  description: "By day and time slot", chart: <HeatMapChart category="salon" />,     featured: true },
+      { title: "Location Performance", description: "Revenue by location",  chart: <LocationMapChart category="salon" /> },
+      { title: "Sales by Time of Day", description: "Hourly distribution",  chart: <HourlyBarChart category="salon" /> },
     ],
     customers: [
-      { title: "Customer Retention", description: "Return visit patterns", chart: <CalendarHeatmap category="salon" />, accent: ACCENT.emerald, featured: true },
-      { title: "Service to Retail",  description: "Conversion funnel",     chart: <FunnelChart category="salon" />,      accent: ACCENT.violet },
-      { title: "Satisfaction Scores", description: "vs industry benchmark", chart: <RadarChart category="salon" />,       accent: ACCENT.primary },
+      { title: "Customer Retention", description: "Return visit patterns", chart: <CalendarHeatmap category="salon" />, featured: true },
+      { title: "Service to Retail",  description: "Conversion funnel",     chart: <FunnelChart category="salon" /> },
+      { title: "Satisfaction Scores", description: "vs industry benchmark", chart: <RadarChart category="salon" /> },
     ],
   },
 }
@@ -218,15 +210,13 @@ const businessCategories: { id: Category; label: string; icon: React.ReactNode }
 ]
 
 const severityMap: Record<string, { bg: string; border: string; dot: string; label: string }> = {
-  high:   { bg: "rgba(220,38,38,0.05)", border: "rgba(220,38,38,0.18)", dot: "#DC2626", label: "High Priority" },
-  medium: { bg: "rgba(234,179,8,0.05)", border: "rgba(234,179,8,0.18)", dot: "#CA8A04", label: "Medium" },
-  low:    { bg: "rgba(14,165,233,0.04)", border: "rgba(14,165,233,0.12)", dot: "#0284C7", label: "Low" },
+  high:   { bg: "rgba(220,38,38,0.04)", border: "rgba(220,38,38,0.15)", dot: "#DC2626", label: "High Priority" },
+  medium: { bg: "rgba(234,179,8,0.04)", border: "rgba(234,179,8,0.15)", dot: "#CA8A04", label: "Medium" },
+  low:    { bg: "rgba(14,165,233,0.03)", border: "rgba(14,165,233,0.1)", dot: "#0284C7", label: "Low" },
 }
 
-const BLUE = "#0284C7"
-
-// ─── SPARKLINE COMPONENT ──────────────────────────────────────────
-function Sparkline({ data, color, width = 60, height = 24 }: { data: number[]; color: string; width?: number; height?: number }) {
+// ─── SPARKLINE ────────────────────────────────────────────────────
+function Sparkline({ data, color, width = 56, height = 22 }: { data: number[]; color: string; width?: number; height?: number }) {
   const min = Math.min(...data), max = Math.max(...data)
   const range = max - min || 1
   const pts = data.map((v, i) => ({
@@ -238,34 +228,26 @@ function Sparkline({ data, color, width = 60, height = 24 }: { data: number[]; c
     const cpx = (pts[i - 1].x + pts[i].x) / 2
     d += ` C ${cpx} ${pts[i - 1].y}, ${cpx} ${pts[i].y}, ${pts[i].x} ${pts[i].y}`
   }
-  const areaD = `${d} L ${width} ${height} L 0 ${height} Z`
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      <defs>
-        <linearGradient id={`spark-${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={areaD} fill={`url(#spark-${color.replace("#","")})`} />
-      <path d={d} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <path d={d} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={0.5} />
     </svg>
   )
 }
 
-// ─── RADIAL HEALTH RING ───────────────────────────────────────────
+// ─── HEALTH RING ──────────────────────────────────────────────────
 function HealthRing({ score, color, label }: { score: number; color: string; label: string }) {
-  const r = 42, circ = 2 * Math.PI * r
+  const r = 40, circ = 2 * Math.PI * r
   const offset = circ - (score / 100) * circ
   return (
-    <div className="flex flex-col items-center justify-center">
-      <svg width="110" height="110" viewBox="0 0 110 110">
-        <circle cx="55" cy="55" r={r} fill="none" stroke="rgba(128,128,128,0.08)" strokeWidth="8" />
-        <circle cx="55" cy="55" r={r} fill="none" stroke={color} strokeWidth="8"
+    <div className="flex flex-col items-center">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(128,128,128,0.08)" strokeWidth="6" />
+        <circle cx="50" cy="50" r={r} fill="none" stroke={color} strokeWidth="6"
           strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}
-          transform="rotate(-90 55 55)" style={{ transition: "stroke-dashoffset 0.8s ease" }} />
-        <text x="55" y="50" textAnchor="middle" fontSize="22" fontWeight="800" fill={color}>{score}</text>
-        <text x="55" y="66" textAnchor="middle" fontSize="9" fill="hsl(var(--muted-foreground))">{label}</text>
+          transform="rotate(-90 50 50)" style={{ transition: "stroke-dashoffset 0.8s ease" }} />
+        <text x="50" y="46" textAnchor="middle" fontSize="20" fontWeight="700" fill={color}>{score}</text>
+        <text x="50" y="60" textAnchor="middle" fontSize="9" fill="hsl(var(--muted-foreground))">{label}</text>
       </svg>
     </div>
   )
@@ -283,24 +265,14 @@ export default function DashboardDemoPage() {
   const report = weeklyReports[category]
   const sparks = sparklines[category]
 
-  const kpiAccents = [ACCENT.primary, ACCENT.violet, ACCENT.amber, ACCENT.emerald]
   const kpiIcons = [
     <DollarSign key="d" className="h-4 w-4" />,
     <Users key="u" className="h-4 w-4" />,
     category === "salon" ? <Calendar key="c" className="h-4 w-4" /> : <ShoppingBag key="s" className="h-4 w-4" />,
     <DollarSign key="d2" className="h-4 w-4" />,
   ]
-  const kpiLabels = [
-    "Revenue", "Customers",
-    category === "salon" ? "Appointments" : "Orders",
-    category === "salon" ? "Avg. Service" : "Avg. Order",
-  ]
-  const kpiData = [
-    { value: metrics.revenue.value, change: metrics.revenue.change },
-    { value: metrics.customers.value, change: metrics.customers.change },
-    { value: metrics.orders.value, change: metrics.orders.change },
-    { value: metrics.avgOrder.value, change: metrics.avgOrder.change },
-  ]
+  const kpiLabels = ["Revenue", "Customers", category === "salon" ? "Appointments" : "Orders", category === "salon" ? "Avg. Service" : "Avg. Order"]
+  const kpiValues = [metrics.revenue, metrics.customers, metrics.orders, metrics.avgOrder]
 
   return (
     <PageLayout>
@@ -348,44 +320,37 @@ export default function DashboardDemoPage() {
       <section className="w-full py-10 md:py-16 section-base">
         <div className="container px-4 md:px-6">
 
-          {/* ── TOP-LEVEL TAB SWITCHER ── */}
+          {/* ── TOP TAB SWITCHER ── */}
           <div className="grid grid-cols-2 gap-4 mb-8 max-w-2xl mx-auto">
             {([
-              { id: "dashboard" as const, icon: <BarChart2 className="h-6 w-6" />, title: "Your Dashboard", sub: "Explore your live metrics" },
-              { id: "digest" as const, icon: <Brain className="h-6 w-6" />, title: "AI Weekly Digest", sub: "Insights that act for you" },
+              { id: "dashboard" as const, icon: <BarChart2 className="h-5 w-5" />, title: "Your Dashboard", sub: "Explore your live metrics" },
+              { id: "digest" as const, icon: <Brain className="h-5 w-5" />, title: "AI Weekly Digest", sub: "Insights that act for you" },
             ]).map((t) => (
-              <motion.button key={t.id} onClick={() => setMainTab(t.id)}
-                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                className="relative rounded-2xl p-5 text-left transition-all duration-300 overflow-hidden"
+              <button key={t.id} onClick={() => setMainTab(t.id)}
+                className="rounded-xl p-5 text-left transition-all duration-200"
                 style={{
-                  background: mainTab === t.id
-                    ? "linear-gradient(135deg, #0EA5E9, #0284C7)"
-                    : "hsl(var(--card))",
-                  border: mainTab === t.id ? "1px solid rgba(14,165,233,0.3)" : "1px solid hsl(var(--border))",
-                  boxShadow: mainTab === t.id
-                    ? "0 8px 32px rgba(14,165,233,0.3), 0 0 20px rgba(14,165,233,0.1)"
-                    : "0 2px 8px rgba(0,0,0,0.06)",
+                  background: mainTab === t.id ? BLUE : "hsl(var(--card))",
+                  border: mainTab === t.id ? "1px solid transparent" : "1px solid hsl(var(--border))",
+                  boxShadow: mainTab === t.id ? "0 4px 20px rgba(2,132,199,0.25)" : "none",
                 }}>
-                <div style={{ color: mainTab === t.id ? "rgba(255,255,255,0.9)" : "#0EA5E9" }} className="mb-3">{t.icon}</div>
-                <div className="font-bold text-lg mb-1" style={{ color: mainTab === t.id ? "#ffffff" : "hsl(var(--foreground))" }}>{t.title}</div>
-                <div className="text-sm" style={{ color: mainTab === t.id ? "rgba(255,255,255,0.7)" : "hsl(var(--muted-foreground))" }}>{t.sub}</div>
-              </motion.button>
+                <div style={{ color: mainTab === t.id ? "rgba(255,255,255,0.85)" : BLUE }} className="mb-2">{t.icon}</div>
+                <div className="font-semibold mb-0.5" style={{ color: mainTab === t.id ? "#fff" : "hsl(var(--foreground))" }}>{t.title}</div>
+                <div className="text-sm" style={{ color: mainTab === t.id ? "rgba(255,255,255,0.65)" : "hsl(var(--muted-foreground))" }}>{t.sub}</div>
+              </button>
             ))}
           </div>
 
-          {/* ── BUSINESS TYPE SELECTOR (segmented control) ── */}
+          {/* ── BUSINESS TYPE SELECTOR ── */}
           <div className="flex flex-col items-center gap-2 mb-8">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Business Type</p>
-            <div className="relative inline-flex rounded-xl p-1 gap-1" style={{ background: "hsl(var(--muted))", border: "1px solid hsl(var(--border))" }}>
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Select Business Type</p>
+            <div className="relative inline-flex rounded-lg p-1 gap-0.5" style={{ background: "hsl(var(--muted))", border: "1px solid hsl(var(--border))" }}>
               {businessCategories.map((cat) => (
                 <button key={cat.id} onClick={() => setCategory(cat.id)}
-                  className="relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 z-10"
-                  style={{
-                    color: category === cat.id ? "#ffffff" : "hsl(var(--muted-foreground))",
-                  }}>
+                  className="relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 z-10"
+                  style={{ color: category === cat.id ? "#ffffff" : "hsl(var(--muted-foreground))" }}>
                   {category === cat.id && (
-                    <motion.div layoutId="category-pill" className="absolute inset-0 rounded-lg"
-                      style={{ background: "linear-gradient(135deg, #0EA5E9, #0284C7)", boxShadow: "0 2px 12px rgba(14,165,233,0.35)" }}
+                    <motion.div layoutId="cat-pill" className="absolute inset-0 rounded-md"
+                      style={{ background: BLUE }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }} />
                   )}
                   <span className="relative z-10 flex items-center gap-2">{cat.icon} {cat.label}</span>
@@ -396,162 +361,110 @@ export default function DashboardDemoPage() {
 
           <AnimatePresence mode="wait">
 
-            {/* ══════════════════════════════════════════════════════
-                YOUR DASHBOARD TAB
-               ══════════════════════════════════════════════════════ */}
+            {/* ══ DASHBOARD TAB ══ */}
             {mainTab === "dashboard" && (
-              <motion.div key="dashboard" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}>
-                <div className="relative rounded-2xl overflow-hidden"
-                  style={{
-                    border: "1px solid hsl(var(--border))",
-                    background: "hsl(var(--card))",
-                    boxShadow: "0 20px 80px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
-                  }}>
+              <motion.div key="dashboard" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                <div className="rounded-xl overflow-hidden"
+                  style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
 
-                  {/* Dashboard header with gradient accent */}
-                  <div className="relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-[0.04]" style={{ background: "linear-gradient(135deg, #0EA5E9 0%, transparent 50%, #8B5CF6 100%)" }} />
-                    <div className="relative flex items-center justify-between p-6 border-b" style={{ borderColor: "hsl(var(--border))" }}>
-                      <div className="flex items-center gap-4">
-                        <div className="p-2.5 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(14,165,233,0.15), rgba(139,92,246,0.1))", color: BLUE, border: "1px solid rgba(14,165,233,0.12)" }}>
-                          {businessCategories.find(c => c.id === category)?.icon}
-                        </div>
-                        <div>
-                          <h2 className="text-lg font-bold text-foreground">{businessCategories.find(c => c.id === category)?.label} Analytics</h2>
-                          <p className="text-xs text-muted-foreground">Sample data — Feb 2025</p>
-                        </div>
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg" style={{ background: "rgba(14,165,233,0.08)", color: BLUE }}>
+                        {businessCategories.find(c => c.id === category)?.icon}
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                          style={{ background: "rgba(22,163,74,0.08)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.12)" }}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                          Live Preview
-                        </div>
-                        <Button variant="outline" size="sm" className="btn-secondary hidden md:flex">
-                          <Download className="mr-2 h-4 w-4" /> Export
-                        </Button>
+                      <div>
+                        <h2 className="font-semibold text-foreground">{businessCategories.find(c => c.id === category)?.label} Analytics</h2>
+                        <p className="text-xs text-muted-foreground">Sample data — Feb 2025</p>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                        style={{ background: "rgba(22,163,74,0.06)", color: "#16A34A", border: "1px solid rgba(22,163,74,0.1)" }}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                        Live Preview
+                      </div>
+                      <Button variant="outline" size="sm" className="btn-secondary hidden md:flex">
+                        <Download className="mr-2 h-4 w-4" /> Export
+                      </Button>
                     </div>
                   </div>
 
-                  {/* ── KPI CARDS with sparklines ── */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                  {/* ── KPI CARDS ── */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 border-b" style={{ borderColor: "hsl(var(--border))" }}>
                     {kpiLabels.map((label, i) => (
-                      <motion.div key={`${category}-${i}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                        className="relative rounded-xl p-4 overflow-hidden group transition-all duration-300 hover:shadow-lg"
-                        style={{
-                          background: "hsl(var(--background))",
-                          border: "1px solid hsl(var(--border))",
-                        }}>
-                        {/* gradient overlay */}
-                        <div className="absolute inset-0 opacity-[0.04]" style={{ background: `linear-gradient(135deg, ${kpiAccents[i]}, transparent)` }} />
-                        {/* top accent bar */}
-                        <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl" style={{ background: `linear-gradient(90deg, ${kpiAccents[i]}, ${kpiAccents[(i + 1) % kpiAccents.length]})` }} />
-                        <div className="relative">
-                          <div className="flex items-center justify-between mb-3">
-                            <p className="text-xs font-medium text-muted-foreground">{label}</p>
-                            <div className="p-1.5 rounded-lg" style={{ background: `linear-gradient(135deg, ${kpiAccents[i]}18, ${kpiAccents[i]}08)`, color: kpiAccents[i] }}>
-                              {kpiIcons[i]}
+                      <motion.div key={`${category}-${i}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+                        className="rounded-lg p-4"
+                        style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-xs font-medium text-muted-foreground">{label}</p>
+                          <div className="p-1 rounded-md text-muted-foreground" style={{ background: "rgba(128,128,128,0.06)" }}>
+                            {kpiIcons[i]}
+                          </div>
+                        </div>
+                        <div className="flex items-end justify-between">
+                          <div>
+                            <p className="text-2xl font-bold text-foreground tracking-tight">{kpiValues[i].value}</p>
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <span className="inline-flex items-center gap-0.5 text-xs font-semibold"
+                                style={{ color: i === 3 ? "#DC2626" : "#16A34A" }}>
+                                {i === 3 ? <TrendingDown className="h-3 w-3" /> : <TrendingUp className="h-3 w-3" />}
+                                {kpiValues[i].change}
+                              </span>
+                              <span className="text-xs text-muted-foreground">vs last</span>
                             </div>
                           </div>
-                          <div className="flex items-end justify-between">
-                            <div>
-                              <p className="text-2xl font-bold text-foreground tracking-tight">{kpiData[i].value}</p>
-                              <div className="flex items-center gap-1.5 mt-2">
-                                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
-                                  style={{
-                                    background: i === 3 ? "rgba(244,63,94,0.08)" : "rgba(22,163,74,0.08)",
-                                    color: i === 3 ? "#F43F5E" : "#16A34A",
-                                  }}>
-                                  {i === 3 ? <TrendingDown className="h-3 w-3" /> : <TrendingUp className="h-3 w-3" />}
-                                  {kpiData[i].change}
-                                </span>
-                                <span className="text-xs text-muted-foreground">vs last</span>
-                              </div>
-                            </div>
-                            <div className="opacity-70 group-hover:opacity-100 transition-opacity">
-                              <Sparkline data={sparks[i]} color={kpiAccents[i]} />
-                            </div>
-                          </div>
+                          <Sparkline data={sparks[i]} color={i === 3 ? "#DC2626" : "#0EA5E9"} />
                         </div>
                       </motion.div>
                     ))}
                   </div>
 
-                  {/* ── Chart sub-tabs (pill style with glow) ── */}
-                  <div className="flex gap-1 p-3 border-b" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}>
+                  {/* ── Chart sub-tabs ── */}
+                  <div className="flex gap-1 p-2 border-b" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}>
                     {(["overview", "sales", "customers"] as ChartTab[]).map((tab) => (
                       <button key={tab} onClick={() => setChartTab(tab)}
-                        className="relative px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                        className="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150"
                         style={chartTab === tab
-                          ? { background: "linear-gradient(135deg, #0EA5E9, #0284C7)", color: "#ffffff", boxShadow: "0 2px 12px rgba(14,165,233,0.35)" }
+                          ? { background: BLUE, color: "#ffffff" }
                           : { color: "hsl(var(--muted-foreground))" }}>
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       </button>
                     ))}
                   </div>
 
-                  {/* ── CHARTS — bento grid with glass cards ── */}
-                  <div className="p-6">
+                  {/* ── CHARTS — bento grid ── */}
+                  <div className="p-5">
                     {mounted && (
-                      <motion.div key={`${category}-${chartTab}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
+                      <motion.div key={`${category}-${chartTab}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
                         {charts[chartTab].length === 4 ? (
-                          /* 4-chart bento: 2/3 + 1/3, then 1/3 + 2/3 */
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {charts[chartTab].map((chart, i) => (
-                              <motion.div key={i}
-                                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                                className={`rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-lg ${
-                                  chart.featured ? "md:col-span-2" : "md:col-span-1"
-                                }`}
-                                style={{
-                                  border: "1px solid hsl(var(--border))",
-                                  background: "hsl(var(--background))",
-                                }}>
-                                {/* accent bar + header */}
-                                <div className="flex items-stretch">
-                                  <div className="w-[3px] rounded-l-2xl flex-shrink-0" style={{ background: chart.accent }} />
-                                  <div className="flex-1">
-                                    <div className="px-5 pt-4 pb-2 flex items-start justify-between">
-                                      <div>
-                                        <p className="font-semibold text-sm text-foreground">{chart.title}</p>
-                                        <p className="text-xs text-muted-foreground mt-0.5">{chart.description}</p>
-                                      </div>
-                                    </div>
-                                    <div className={`w-full px-4 pb-4 pt-1 ${chart.featured ? "h-[300px]" : "h-[260px]"}`}>
-                                      {chart.chart}
-                                    </div>
-                                  </div>
+                              <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+                                className={`rounded-lg overflow-hidden ${chart.featured ? "md:col-span-2" : "md:col-span-1"}`}
+                                style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }}>
+                                <div className="px-4 pt-3 pb-1">
+                                  <p className="font-medium text-sm text-foreground">{chart.title}</p>
+                                  <p className="text-xs text-muted-foreground">{chart.description}</p>
+                                </div>
+                                <div className={`w-full px-3 pb-3 pt-1 ${chart.featured ? "h-[280px]" : "h-[250px]"}`}>
+                                  {chart.chart}
                                 </div>
                               </motion.div>
                             ))}
                           </div>
                         ) : (
-                          /* 3-chart bento: full-width featured, then 1/2 + 1/2 */
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {charts[chartTab].map((chart, i) => (
-                              <motion.div key={i}
-                                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                                className={`rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-lg ${
-                                  chart.featured ? "md:col-span-2" : ""
-                                }`}
-                                style={{
-                                  border: "1px solid hsl(var(--border))",
-                                  background: "hsl(var(--background))",
-                                }}>
-                                <div className="flex items-stretch">
-                                  <div className="w-[3px] rounded-l-2xl flex-shrink-0" style={{ background: chart.accent }} />
-                                  <div className="flex-1">
-                                    <div className="px-5 pt-4 pb-2 flex items-start justify-between">
-                                      <div>
-                                        <p className="font-semibold text-sm text-foreground">{chart.title}</p>
-                                        <p className="text-xs text-muted-foreground mt-0.5">{chart.description}</p>
-                                      </div>
-                                    </div>
-                                    <div className={`w-full px-4 pb-4 pt-1 ${chart.featured ? "h-[300px]" : "h-[260px]"}`}>
-                                      {chart.chart}
-                                    </div>
-                                  </div>
+                              <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+                                className={`rounded-lg overflow-hidden ${chart.featured ? "md:col-span-2" : ""}`}
+                                style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }}>
+                                <div className="px-4 pt-3 pb-1">
+                                  <p className="font-medium text-sm text-foreground">{chart.title}</p>
+                                  <p className="text-xs text-muted-foreground">{chart.description}</p>
+                                </div>
+                                <div className={`w-full px-3 pb-3 pt-1 ${chart.featured ? "h-[280px]" : "h-[250px]"}`}>
+                                  {chart.chart}
                                 </div>
                               </motion.div>
                             ))}
@@ -561,11 +474,10 @@ export default function DashboardDemoPage() {
                     )}
                   </div>
 
-                  {/* Dashboard footer */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-t" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}>
+                  {/* Footer */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 border-t" style={{ borderColor: "hsl(var(--border))", background: "hsl(var(--background))" }}>
                     <p className="text-xs text-muted-foreground">Demo dashboard — in the full version all charts connect to your real POS data.</p>
-                    <Button className="shadow-lg" style={{ background: "linear-gradient(135deg, #0EA5E9, #0284C7)", color: "#ffffff", fontWeight: 600 }}
-                      onClick={() => window.location.href = "/contact"}>
+                    <Button style={{ background: BLUE, color: "#fff", fontWeight: 600 }} onClick={() => window.location.href = "/contact"}>
                       Book a Live Demo <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -573,27 +485,21 @@ export default function DashboardDemoPage() {
               </motion.div>
             )}
 
-            {/* ══════════════════════════════════════════════════════
-                AI WEEKLY DIGEST TAB
-               ══════════════════════════════════════════════════════ */}
+            {/* ══ AI WEEKLY DIGEST TAB ══ */}
             {mainTab === "digest" && (
-              <motion.div key="digest" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}>
-                <div className="rounded-2xl overflow-hidden"
-                  style={{
-                    border: "1px solid hsl(var(--border))",
-                    background: "hsl(var(--card))",
-                    boxShadow: "0 20px 80px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
-                  }}>
+              <motion.div key="digest" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+                <div className="rounded-xl overflow-hidden"
+                  style={{ border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
 
-                  {/* Report header with health ring */}
-                  <div className="p-6 border-b" style={{ borderColor: "hsl(var(--border))" }}>
+                  {/* Header */}
+                  <div className="p-5 border-b" style={{ borderColor: "hsl(var(--border))" }}>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <Brain className="h-5 w-5" style={{ color: BLUE }} />
+                          <Brain className="h-4 w-4" style={{ color: BLUE }} />
                           <span className="text-sm font-semibold" style={{ color: BLUE }}>AI Weekly Digest</span>
                         </div>
-                        <h2 className="text-xl font-bold text-foreground">
+                        <h2 className="text-lg font-bold text-foreground">
                           {businessCategories.find(c => c.id === category)?.label} — Week of {report.period}
                         </h2>
                         <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{report.summary}</p>
@@ -602,18 +508,18 @@ export default function DashboardDemoPage() {
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-8">
+                  <div className="p-5 space-y-7">
 
-                    {/* KPI Delta Row */}
+                    {/* KPIs */}
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: BLUE }}>This Week vs Last Week</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: BLUE }}>This Week vs Last Week</p>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {report.kpis.map((kpi: KPI, i: number) => (
-                          <div key={i} className="rounded-xl p-4 text-center transition-all duration-200 hover:shadow-md"
+                          <div key={i} className="rounded-lg p-3 text-center"
                             style={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))" }}>
                             <p className="text-xs text-muted-foreground mb-1">{kpi.label}</p>
-                            <p className="text-xl font-bold text-foreground">{kpi.current}</p>
-                            <p className="text-xs mt-1 font-semibold" style={{ color: kpi.up ? "#16A34A" : "#F43F5E" }}>
+                            <p className="text-lg font-bold text-foreground">{kpi.current}</p>
+                            <p className="text-xs mt-1 font-semibold" style={{ color: kpi.up ? "#16A34A" : "#DC2626" }}>
                               {kpi.up ? "↑" : "↓"} {kpi.delta}
                             </p>
                             <p className="text-xs text-muted-foreground">prev: {kpi.prev}</p>
@@ -624,22 +530,17 @@ export default function DashboardDemoPage() {
 
                     {/* Wins */}
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: BLUE }}>Top Wins This Week</p>
-                      <div className="grid md:grid-cols-3 gap-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: BLUE }}>Top Wins This Week</p>
+                      <div className="grid md:grid-cols-3 gap-3">
                         {report.wins.map((win: Win, i: number) => (
-                          <div key={i} className="rounded-xl p-4 overflow-hidden transition-all duration-200 hover:shadow-md"
-                            style={{ background: "rgba(22,163,74,0.03)", border: "1px solid rgba(22,163,74,0.12)" }}>
-                            <div className="flex items-stretch gap-3">
-                              <div className="w-[3px] rounded-full flex-shrink-0" style={{ background: "#16A34A" }} />
-                              <div>
-                                <div className="text-xl mb-2">{win.icon}</div>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="font-semibold text-sm text-foreground">{win.metric}</span>
-                                  <span className="text-sm font-black" style={{ color: "#16A34A" }}>{win.value}</span>
-                                </div>
-                                <p className="text-xs text-muted-foreground leading-relaxed">{win.detail}</p>
-                              </div>
+                          <div key={i} className="rounded-lg p-4"
+                            style={{ background: "rgba(22,163,74,0.03)", border: "1px solid rgba(22,163,74,0.1)" }}>
+                            <div className="text-lg mb-1">{win.icon}</div>
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="font-medium text-sm text-foreground">{win.metric}</span>
+                              <span className="text-sm font-bold" style={{ color: "#16A34A" }}>{win.value}</span>
                             </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{win.detail}</p>
                           </div>
                         ))}
                       </div>
@@ -647,26 +548,25 @@ export default function DashboardDemoPage() {
 
                     {/* Alerts */}
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: BLUE }}>Alerts & Anomalies</p>
-                      <div className="space-y-3">
+                      <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: BLUE }}>Alerts & Anomalies</p>
+                      <div className="space-y-2.5">
                         {report.alerts.map((alert: Alert, i: number) => {
                           const colors = severityMap[alert.severity] ?? severityMap.low
                           return (
-                            <div key={i} className="rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md"
+                            <div key={i} className="rounded-lg p-4"
                               style={{ background: colors.bg, border: `1px solid ${colors.border}` }}>
-                              <div className="flex items-stretch">
-                                <div className="w-[3px] flex-shrink-0" style={{ background: colors.dot }} />
-                                <div className="flex-1 p-4">
+                              <div className="flex items-start gap-3">
+                                <div className="mt-1.5 w-2 h-2 rounded-full shrink-0" style={{ background: colors.dot }} />
+                                <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-semibold text-sm text-foreground">{alert.label}</span>
+                                    <span className="font-medium text-sm text-foreground">{alert.label}</span>
                                     <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                                      style={{ background: `${colors.dot}15`, color: colors.dot }}>
+                                      style={{ background: `${colors.dot}12`, color: colors.dot }}>
                                       {colors.label}
                                     </span>
                                   </div>
                                   <p className="text-xs text-muted-foreground mb-2">{alert.detail}</p>
-                                  <div className="flex items-start gap-2 text-xs rounded-lg px-3 py-2"
-                                    style={{ background: `${colors.dot}08` }}>
+                                  <div className="flex items-start gap-2 text-xs rounded-md px-3 py-2" style={{ background: `${colors.dot}08` }}>
                                     <Zap className="h-3 w-3 shrink-0 mt-0.5" style={{ color: colors.dot }} />
                                     <span style={{ color: colors.dot, fontWeight: 600 }}>Suggested: </span>
                                     <span className="text-muted-foreground ml-1">{alert.action}</span>
@@ -680,25 +580,17 @@ export default function DashboardDemoPage() {
                     </div>
 
                     {/* Top Action */}
-                    <div className="rounded-2xl p-6 overflow-hidden"
-                      style={{
-                        background: "rgba(14,165,233,0.03)",
-                        border: "1px solid rgba(14,165,233,0.15)",
-                        boxShadow: "0 0 30px rgba(14,165,233,0.05)",
-                      }}>
+                    <div className="rounded-lg p-5"
+                      style={{ background: "rgba(14,165,233,0.03)", border: "1px solid rgba(14,165,233,0.12)" }}>
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="p-1.5 rounded-lg" style={{ background: "linear-gradient(135deg, rgba(14,165,233,0.15), rgba(139,92,246,0.1))" }}>
-                          <Zap className="h-4 w-4" style={{ color: BLUE }} />
-                        </div>
+                        <Zap className="h-4 w-4" style={{ color: BLUE }} />
                         <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: BLUE }}>#1 Recommended Action This Week</span>
                       </div>
                       <h3 className="text-lg font-bold text-foreground mb-2">{report.topAction.title}</h3>
                       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{report.topAction.detail}</p>
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <span className="text-sm font-bold" style={{ color: "#16A34A" }}>{report.topAction.impact}</span>
-                        <Button className="shadow-lg"
-                          style={{ background: "linear-gradient(135deg, #0EA5E9, #0284C7)", color: "#ffffff", fontWeight: 600 }}
-                          onClick={() => window.location.href = "/contact"}>
+                        <Button style={{ background: BLUE, color: "#fff", fontWeight: 600 }} onClick={() => window.location.href = "/contact"}>
                           Get This For My Business <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </div>
@@ -732,7 +624,7 @@ export default function DashboardDemoPage() {
             ].map((f, i) => (
               <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.1}>
                 <div className="enhanced-card p-6 text-center">
-                  <div className="mx-auto mb-4 p-3 rounded-xl w-fit" style={{ background: "linear-gradient(135deg, rgba(14,165,233,0.12), rgba(139,92,246,0.08))", color: BLUE }}>{f.icon}</div>
+                  <div className="mx-auto mb-4 p-3 rounded-xl w-fit" style={{ background: "rgba(14,165,233,0.08)", color: BLUE }}>{f.icon}</div>
                   <h3 className="font-bold text-foreground mb-2">{f.title}</h3>
                   <p className="text-sm text-muted-foreground">{f.desc}</p>
                 </div>
@@ -743,7 +635,7 @@ export default function DashboardDemoPage() {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="w-full py-16 md:py-20" style={{ background: "linear-gradient(135deg, #0284C7, #0EA5E9)" }}>
+      <section className="w-full py-16 md:py-20" style={{ background: BLUE }}>
         <div className="container px-4 md:px-6">
           <div className="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
             <div>
@@ -758,7 +650,7 @@ export default function DashboardDemoPage() {
                 </Button>
               </div>
             </div>
-            <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
+            <div className="rounded-xl p-6" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
               <h3 className="text-lg font-bold text-white mb-4">What You Get in Your Demo</h3>
               <ul className="space-y-3">
                 {[
