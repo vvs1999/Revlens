@@ -972,4 +972,3 @@ export function MetricsTable({ category = "cafe" }: { category?: string }) {
     </div>
   )
 }
-}
