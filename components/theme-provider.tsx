@@ -30,15 +30,17 @@ export function ThemeProvider({
   storageKey = "data-insight-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>("light")
+  const [theme, setTheme] = useState<Theme>(defaultTheme === "system" ? "light" : defaultTheme)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem(storageKey)
 
     if (savedTheme && ["light", "dark"].includes(savedTheme)) {
       setTheme(savedTheme as Theme)
+    } else {
+      setTheme(defaultTheme === "system" ? "light" : defaultTheme)
     }
-  }, [storageKey])
+  }, [storageKey, defaultTheme])
 
   useEffect(() => {
     const root = window.document.documentElement

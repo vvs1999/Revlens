@@ -233,7 +233,7 @@ export function EnhancedHeroSection() {
             {/* ── UPDATED: subheading — honest positioning ── */}
             <motion.p className="text-lg leading-relaxed max-w-lg" style={{ color: subColor }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              We connect to your POS, build your analytics dashboard, and deliver a plain-English summary every Monday.
+              We connect to your tools, build your analytics dashboard, and deliver a plain-English summary every Monday.
               No charts to learn. No analysts to hire. Just answers — and an AI that answers your follow-up questions.
             </motion.p>
 
