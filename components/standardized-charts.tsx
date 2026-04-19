@@ -15,6 +15,9 @@ const revenuePoints = {
   retail:       [32, 38, 35, 42, 48, 44, 52, 55, 50, 58, 62, 68],
   restaurant:   [25, 30, 28, 35, 40, 37, 44, 48, 45, 52, 56, 60],
   salon:        [20, 24, 22, 28, 32, 29, 35, 38, 36, 42, 44, 48],
+  saas:         [28, 30, 32, 34, 36, 38, 40, 42, 43, 44, 45, 46],
+  ecommerce:    [38, 42, 40, 46, 50, 47, 52, 54, 51, 56, 60, 56],
+  agency:       [55, 60, 58, 65, 70, 68, 74, 78, 75, 82, 86, 88],
 }
 const months = ["Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul"]
 
@@ -43,7 +46,7 @@ export function RevenueTrendChart({ category = "cafe" }: { category?: string }) 
 
   const linePath = smooth(pts)
   const areaPath = `${linePath} L ${pts[pts.length-1].x} ${H} L ${pts[0].x} ${H} Z`
-  const change = category === "retail" ? "10%" : category === "restaurant" ? "18%" : category === "salon" ? "12%" : "15%"
+  const change = category === "retail" ? "10%" : category === "restaurant" ? "18%" : category === "salon" ? "12%" : category === "saas" ? "28%" : category === "ecommerce" ? "14%" : category === "agency" ? "16%" : "15%"
 
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
@@ -712,4 +715,261 @@ export function FunnelChart({ category = "cafe" }: { category?: string }) {
       ))}
     </div>
   )
+}
+
+// ─── REVENUE COMBO CHART (Bar + Line overlay) ─────────────────────
+const comboData: Record<string, { month: string; revenue: number; growth: number }[]> = {
+  cafe: [
+    { month: "Feb", revenue: 18, growth: 4 },
+    { month: "Mar", revenue: 22, growth: 8 },
+    { month: "Apr", revenue: 28, growth: 12 },
+    { month: "May", revenue: 24, growth: 6 },
+    { month: "Jun", revenue: 30, growth: 14 },
+    { month: "Jul", revenue: 27, growth: 9 },
+    { month: "Aug", revenue: 35, growth: 18 },
+    { month: "Sep", revenue: 32, growth: 15 },
+    { month: "Oct", revenue: 38, growth: 20 },
+    { month: "Nov", revenue: 34, growth: 13 },
+    { month: "Dec", revenue: 42, growth: 24 },
+    { month: "Jan", revenue: 45, growth: 28 },
+  ],
+  retail: [
+    { month: "Feb", revenue: 32, growth: 3 },
+    { month: "Mar", revenue: 38, growth: 7 },
+    { month: "Apr", revenue: 35, growth: 5 },
+    { month: "May", revenue: 42, growth: 10 },
+    { month: "Jun", revenue: 48, growth: 14 },
+    { month: "Jul", revenue: 44, growth: 12 },
+    { month: "Aug", revenue: 52, growth: 18 },
+    { month: "Sep", revenue: 55, growth: 22 },
+    { month: "Oct", revenue: 50, growth: 16 },
+    { month: "Nov", revenue: 58, growth: 25 },
+    { month: "Dec", revenue: 62, growth: 30 },
+    { month: "Jan", revenue: 68, growth: 35 },
+  ],
+  restaurant: [
+    { month: "Feb", revenue: 25, growth: 5 },
+    { month: "Mar", revenue: 30, growth: 10 },
+    { month: "Apr", revenue: 28, growth: 8 },
+    { month: "May", revenue: 35, growth: 14 },
+    { month: "Jun", revenue: 40, growth: 18 },
+    { month: "Jul", revenue: 37, growth: 15 },
+    { month: "Aug", revenue: 44, growth: 22 },
+    { month: "Sep", revenue: 48, growth: 26 },
+    { month: "Oct", revenue: 45, growth: 22 },
+    { month: "Nov", revenue: 52, growth: 30 },
+    { month: "Dec", revenue: 56, growth: 34 },
+    { month: "Jan", revenue: 60, growth: 38 },
+  ],
+  salon: [
+    { month: "Feb", revenue: 20, growth: 4 },
+    { month: "Mar", revenue: 24, growth: 8 },
+    { month: "Apr", revenue: 22, growth: 6 },
+    { month: "May", revenue: 28, growth: 12 },
+    { month: "Jun", revenue: 32, growth: 16 },
+    { month: "Jul", revenue: 29, growth: 13 },
+    { month: "Aug", revenue: 35, growth: 20 },
+    { month: "Sep", revenue: 38, growth: 24 },
+    { month: "Oct", revenue: 36, growth: 21 },
+    { month: "Nov", revenue: 42, growth: 28 },
+    { month: "Dec", revenue: 44, growth: 30 },
+    { month: "Jan", revenue: 48, growth: 35 },
+  ],
+  saas: [
+    { month: "Feb", revenue: 28, growth: 8 },
+    { month: "Mar", revenue: 30, growth: 12 },
+    { month: "Apr", revenue: 32, growth: 14 },
+    { month: "May", revenue: 34, growth: 16 },
+    { month: "Jun", revenue: 36, growth: 18 },
+    { month: "Jul", revenue: 38, growth: 20 },
+    { month: "Aug", revenue: 40, growth: 22 },
+    { month: "Sep", revenue: 42, growth: 24 },
+    { month: "Oct", revenue: 43, growth: 25 },
+    { month: "Nov", revenue: 44, growth: 26 },
+    { month: "Dec", revenue: 45, growth: 27 },
+    { month: "Jan", revenue: 46, growth: 28 },
+  ],
+  ecommerce: [
+    { month: "Feb", revenue: 38, growth: 6 },
+    { month: "Mar", revenue: 42, growth: 9 },
+    { month: "Apr", revenue: 40, growth: 7 },
+    { month: "May", revenue: 46, growth: 12 },
+    { month: "Jun", revenue: 50, growth: 16 },
+    { month: "Jul", revenue: 47, growth: 13 },
+    { month: "Aug", revenue: 52, growth: 18 },
+    { month: "Sep", revenue: 54, growth: 20 },
+    { month: "Oct", revenue: 51, growth: 17 },
+    { month: "Nov", revenue: 56, growth: 22 },
+    { month: "Dec", revenue: 60, growth: 26 },
+    { month: "Jan", revenue: 56, growth: 22 },
+  ],
+  agency: [
+    { month: "Feb", revenue: 55, growth: 5 },
+    { month: "Mar", revenue: 60, growth: 9 },
+    { month: "Apr", revenue: 58, growth: 7 },
+    { month: "May", revenue: 65, growth: 12 },
+    { month: "Jun", revenue: 70, growth: 16 },
+    { month: "Jul", revenue: 68, growth: 14 },
+    { month: "Aug", revenue: 74, growth: 18 },
+    { month: "Sep", revenue: 78, growth: 22 },
+    { month: "Oct", revenue: 75, growth: 19 },
+    { month: "Nov", revenue: 82, growth: 25 },
+    { month: "Dec", revenue: 86, growth: 29 },
+    { month: "Jan", revenue: 88, growth: 31 },
+  ],
+}
+
+export function RevenueComboChart({ category = "cafe" }: { category?: string }) {
+  const data = comboData[category] || comboData.cafe
+  const revenues = data.map(d => d.revenue)
+  const growths = data.map(d => d.growth)
+  const maxRev = Math.max(...revenues)
+  const maxGrowth = Math.max(...growths)
+  const W = 340, H = 180, padL = 36, padR = 36, padT = 16, padB = 28
+  const chartW = W - padL - padR
+  const chartH = H - padT - padB
+  const barW = chartW / data.length - 4
+
+  const growthPts = data.map((d, i) => {
+    const x = padL + (i / (data.length - 1)) * chartW
+    const y = padT + (1 - d.growth / maxGrowth) * chartH
+    return `${x},${y}`
+  })
+  const linePath = `M ${growthPts.join(" L ")}`
+
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", gap: 16, padding: "0 0 8px 36px", fontSize: 10, color: TEXT }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <span style={{ width: 10, height: 10, borderRadius: 2, background: BLUE, display: "inline-block", opacity: 0.75 }} /> Revenue ($k)
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <span style={{ width: 16, height: 2, background: BLUE_LIGHT, display: "inline-block" }} /> Growth %
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ flex: 1, width: "100%" }}>
+        {/* Grid lines */}
+        {[0.25, 0.5, 0.75, 1].map((t, i) => (
+          <line key={i} x1={padL} y1={padT + (1 - t) * chartH} x2={W - padR} y2={padT + (1 - t) * chartH}
+            stroke="rgba(148,163,184,0.12)" strokeWidth="1" />
+        ))}
+        {/* Y-axis labels (revenue) */}
+        {[0, 0.5, 1].map((t, i) => (
+          <text key={i} x={padL - 4} y={padT + (1 - t) * chartH + 4} textAnchor="end" fontSize="9" fill={TEXT}>
+            {Math.round(maxRev * t)}k
+          </text>
+        ))}
+        {/* Y-axis labels (growth, right) */}
+        {[0, 0.5, 1].map((t, i) => (
+          <text key={i} x={W - padR + 4} y={padT + (1 - t) * chartH + 4} textAnchor="start" fontSize="9" fill={BLUE_LIGHT}>
+            {Math.round(maxGrowth * t)}%
+          </text>
+        ))}
+        {/* Revenue bars */}
+        {data.map((d, i) => {
+          const x = padL + i * (chartW / data.length) + 2
+          const barH = (d.revenue / maxRev) * chartH
+          return (
+            <rect key={i} x={x} y={padT + chartH - barH} width={barW} height={barH} rx="3"
+              fill={BLUE} opacity={0.7} />
+          )
+        })}
+        {/* Growth line */}
+        <path d={linePath} fill="none" stroke={BLUE_LIGHT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {data.map((_, i) => {
+          const x = padL + (i / (data.length - 1)) * chartW
+          const y = padT + (1 - data[i].growth / maxGrowth) * chartH
+          return <circle key={i} cx={x} cy={y} r="2.5" fill={BLUE_LIGHT} />
+        })}
+        {/* X-axis labels */}
+        {data.map((d, i) => i % 2 === 0 && (
+          <text key={i} x={padL + i * (chartW / data.length) + barW / 2} y={H - 8}
+            textAnchor="middle" fontSize="9" fill={TEXT}>{d.month}</text>
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+// ─── METRICS TABLE ────────────────────────────────────────────────
+const metricsTableData: Record<string, { metric: string; current: string; previous: string; change: string; up: boolean }[]> = {
+  cafe: [
+    { metric: "Revenue",         current: "$24,500", previous: "$21,300", change: "+15%", up: true  },
+    { metric: "Avg. Ticket",     current: "$32.50",  previous: "$30.95",  change: "+5%",  up: true  },
+    { metric: "Daily Customers", current: "180",     previous: "167",     change: "+8%",  up: true  },
+    { metric: "Waste Rate",      current: "5%",      previous: "8%",      change: "-38%", up: true  },
+    { metric: "Peak Hour Rev.",  current: "$4,200",  previous: "$3,800",  change: "+11%", up: true  },
+  ],
+  retail: [
+    { metric: "Revenue",          current: "$78,900", previous: "$71,700", change: "+10%", up: true  },
+    { metric: "Avg. Order",       current: "$45.75",  previous: "$44.40",  change: "+3%",  up: true  },
+    { metric: "Customers",        current: "2,780",   previous: "2,482",   change: "+12%", up: true  },
+    { metric: "Inventory Turn",   current: "75%",     previous: "62%",     change: "+21%", up: true  },
+    { metric: "Returns Rate",     current: "3.2%",    previous: "4.1%",    change: "-22%", up: true  },
+  ],
+  restaurant: [
+    { metric: "Revenue",         current: "$52,300", previous: "$44,300", change: "+18%", up: true  },
+    { metric: "Avg. Check",      current: "$38.25",  previous: "$35.75",  change: "+7%",  up: true  },
+    { metric: "Covers",          current: "1,850",   previous: "1,609",   change: "+15%", up: true  },
+    { metric: "Table Turnover",  current: "3.2×",    previous: "2.8×",    change: "+14%", up: true  },
+    { metric: "Food Cost %",     current: "28%",     previous: "32%",     change: "-13%", up: true  },
+  ],
+  salon: [
+    { metric: "Revenue",         current: "$31,200", previous: "$27,900", change: "+12%", up: true  },
+    { metric: "Avg. Ticket",     current: "$75.50",  previous: "$71.25",  change: "+6%",  up: true  },
+    { metric: "Bookings",        current: "420",     previous: "385",     change: "+9%",  up: true  },
+    { metric: "Booking Rate",    current: "92%",     previous: "81%",     change: "+14%", up: true  },
+    { metric: "Rebooking Rate",  current: "68%",     previous: "55%",     change: "+24%", up: true  },
+  ],
+  saas: [
+    { metric: "MRR",             current: "$46,500", previous: "$36,300", change: "+28%", up: true  },
+    { metric: "Churn Rate",      current: "3%",      previous: "5.2%",    change: "-42%", up: true  },
+    { metric: "Trial Conv. Rate",current: "34%",     previous: "22%",     change: "+55%", up: true  },
+    { metric: "Customer LTV",    current: "$3,800",  previous: "$2,900",  change: "+31%", up: true  },
+    { metric: "CAC",             current: "$420",    previous: "$610",    change: "-31%", up: true  },
+  ],
+  ecommerce: [
+    { metric: "GMV",             current: "$55,600", previous: "$48,700", change: "+14%", up: true  },
+    { metric: "Avg. Order",      current: "$68.40",  previous: "$64.50",  change: "+6%",  up: true  },
+    { metric: "Orders",          current: "5,240",   previous: "4,441",   change: "+18%", up: true  },
+    { metric: "Repeat Rate",     current: "38%",     previous: "26%",     change: "+46%", up: true  },
+    { metric: "CAC",             current: "$22",     previous: "$34",     change: "-35%", up: true  },
+  ],
+  agency: [
+    { metric: "Revenue",         current: "$88,200", previous: "$76,000", change: "+16%", up: true  },
+    { metric: "Billable Util.",  current: "81%",     previous: "68%",     change: "+19%", up: true  },
+    { metric: "Active Clients",  current: "20",      previous: "18",      change: "+11%", up: true  },
+    { metric: "Avg. Retainer",   current: "$4,120",  previous: "$3,800",  change: "+8%",  up: true  },
+    { metric: "Pipeline",        current: "$142k",   previous: "$98k",    change: "+45%", up: true  },
+  ],
+}
+
+export function MetricsTable({ category = "cafe" }: { category?: string }) {
+  const rows = metricsTableData[category] || metricsTableData.cafe
+  return (
+    <div style={{ width: "100%", height: "100%", overflow: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+        <thead>
+          <tr style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+            {["Metric", "Current", "Previous", "Change"].map(h => (
+              <th key={h} style={{ padding: "8px 10px", textAlign: h === "Metric" ? "left" : "right", fontSize: 11, fontWeight: 600, color: "hsl(var(--muted-foreground))", whiteSpace: "nowrap" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i} style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+              <td style={{ padding: "9px 10px", fontWeight: 600, color: "hsl(var(--foreground))", whiteSpace: "nowrap" }}>{row.metric}</td>
+              <td style={{ padding: "9px 10px", textAlign: "right", fontWeight: 700, color: BLUE, whiteSpace: "nowrap" }}>{row.current}</td>
+              <td style={{ padding: "9px 10px", textAlign: "right", color: "hsl(var(--muted-foreground))", whiteSpace: "nowrap" }}>{row.previous}</td>
+              <td style={{ padding: "9px 10px", textAlign: "right", whiteSpace: "nowrap" }}>
+                <span style={{ fontWeight: 700, color: row.up ? "#16A34A" : "#DC2626", fontSize: 11 }}>{row.change}</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
 }

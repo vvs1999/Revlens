@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Store, UtensilsCrossed, ShoppingBag, Scissors, Coffee, Twitter, Linkedin, Instagram } from "lucide-react"
+import { Store, UtensilsCrossed, ShoppingBag, Scissors, Coffee, Code2, ShoppingCart, Briefcase } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "@/components/theme-provider"
 
@@ -18,6 +18,39 @@ type Industry = {
 }
 
 const industries: Industry[] = [
+  {
+    id: "saas", name: "SaaS", icon: <Code2 className="h-5 w-5" />,
+    challenge: "High churn eating into MRR growth with no early-warning system",
+    solution: "Cohort churn analysis, trial conversion tracking, and MRR trend dashboards",
+    result: "Early churn signals caught 30+ days out, trial-to-paid conversion lifted",
+    metrics: [
+      { before: 8, after: 3, unit: "%", label: "Monthly Churn Rate" },
+      { before: 18, after: 34, unit: "%", label: "Trial Conversion Rate" },
+      { before: 28000, after: 46500, unit: "$", label: "Monthly MRR" },
+    ],
+  },
+  {
+    id: "ecommerce", name: "E-commerce", icon: <ShoppingCart className="h-5 w-5" />,
+    challenge: "High customer acquisition cost with unclear channel attribution",
+    solution: "Channel revenue attribution, repeat purchase analytics, and cohort LTV tracking",
+    result: "Ad spend reallocated to highest-LTV channels, repeat purchase rate increased",
+    metrics: [
+      { before: 48, after: 22, unit: "$", label: "Cost Per Acquisition" },
+      { before: 22, after: 38, unit: "%", label: "Repeat Purchase Rate" },
+      { before: 38000, after: 55600, unit: "$", label: "Monthly GMV" },
+    ],
+  },
+  {
+    id: "agency", name: "Agency", icon: <Briefcase className="h-5 w-5" />,
+    challenge: "Revenue unpredictability and unclear client profitability by account",
+    solution: "Retainer vs project revenue split, billable utilization, and pipeline analytics",
+    result: "Unprofitable accounts identified, retainer revenue mix improved",
+    metrics: [
+      { before: 58, after: 81, unit: "%", label: "Billable Utilization" },
+      { before: 42, after: 68, unit: "%", label: "Retainer Revenue Mix" },
+      { before: 62000, after: 88200, unit: "$", label: "Monthly Revenue" },
+    ],
+  },
   {
     id: "restaurant", name: "Restaurants", icon: <UtensilsCrossed className="h-5 w-5" />,
     challenge: "High food waste and difficulty predicting busy periods",
@@ -40,43 +73,10 @@ const industries: Industry[] = [
       { before: 8500, after: 12000, unit: "$", label: "Weekly Sales" },
     ],
   },
-  {
-    id: "cafe", name: "Cafés", icon: <Coffee className="h-5 w-5" />,
-    challenge: "Inconsistent sales and difficulty with menu optimization",
-    solution: "Sales pattern analysis and menu performance tracking",
-    result: "Streamlined menu and better peak-hour preparation",
-    metrics: [
-      { before: 4.5, after: 8.2, unit: "$", label: "Avg. Transaction Value" },
-      { before: 120, after: 185, unit: "", label: "Daily Customers" },
-      { before: 18, after: 12, unit: "", label: "Menu Items" },
-    ],
-  },
-  {
-    id: "salon", name: "Beauty Salons", icon: <Scissors className="h-5 w-5" />,
-    challenge: "Appointment scheduling gaps and service popularity uncertainty",
-    solution: "Appointment analytics and service performance tracking",
-    result: "Optimized scheduling and focus on high-profit services",
-    metrics: [
-      { before: 65, after: 92, unit: "%", label: "Booking Rate" },
-      { before: 25, after: 45, unit: "%", label: "Repeat Customers" },
-      { before: 7500, after: 11200, unit: "$", label: "Monthly Revenue" },
-    ],
-  },
-  {
-    id: "convenience", name: "Convenience Stores", icon: <Store className="h-5 w-5" />,
-    challenge: "Inefficient product placement and stock management",
-    solution: "Customer flow analysis and inventory optimization",
-    result: "Better product placement and reduced stockouts",
-    metrics: [
-      { before: 12, after: 3, unit: "%", label: "Stockout Rate" },
-      { before: 2.8, after: 4.2, unit: "$", label: "Avg. Transaction Value" },
-      { before: 15000, after: 19500, unit: "$", label: "Monthly Revenue" },
-    ],
-  },
 ]
 
 export function IndustryExamples() {
-  const [activeIndustry, setActiveIndustry] = useState(industries[0].id)
+  const [activeIndustry, setActiveIndustry] = useState("saas")
   const current = industries.find((i) => i.id === activeIndustry) || industries[0]
   const { theme } = useTheme()
   const isDark = theme === "dark"
@@ -106,7 +106,7 @@ export function IndustryExamples() {
             Solutions for Every Business Type
           </h2>
           <p className="max-w-[900px] md:text-xl/relaxed" style={{ color: "hsl(var(--muted-foreground))" }}>
-            See how RevLens analytics help different types of local businesses overcome their data challenges.
+            See how RevLens analytics help SaaS, e-commerce, agencies, and beyond overcome their data challenges.
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export function IndustryExamples() {
                     <div className="flex justify-between items-center mb-3">
                       <div className="text-sm font-semibold" style={{ color: "hsl(var(--foreground))" }}>{metric.label}</div>
                       <div className="text-sm font-bold" style={{ color: "#0EA5E9" }}>
-                        {metric.label === "Menu Items" || metric.label === "Stockout Rate"
+                        {metric.label === "Menu Items" || metric.label === "Stockout Rate" || metric.label === "Monthly Churn Rate" || metric.label === "Cost Per Acquisition"
                           ? `-${Math.round(((metric.before - metric.after) / metric.before) * 100)}% Reduction`
                           : `+${Math.round(((metric.after - metric.before) / metric.before) * 100)}% Improvement`}
                       </div>

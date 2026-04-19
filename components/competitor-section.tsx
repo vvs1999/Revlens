@@ -15,7 +15,7 @@ const revlensFeatures = [
   "Done-for-you dashboard setup — we build it",
   "Plain-English Monday report, no charts required",
   "AI follow-up Q&A — ask anything about your data",
-  "Works across Square, Toast, Lightspeed & more",
+  "Works across Square, Stripe, Shopify, HubSpot & more",
   "Fraction of the cost of a full-time analyst",
 ]
 

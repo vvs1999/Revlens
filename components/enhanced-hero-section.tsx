@@ -97,9 +97,9 @@ function MockDashboard() {
   const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
   const kpis = [
     { label: "Monthly Revenue", value: 48200, prefix: "$", suffix: "", change: "+18%", icon: <TrendingUp className="h-3.5 w-3.5" /> },
-    { label: "Inventory Health", value: 94, prefix: "", suffix: "%", change: "+12%", icon: <Package className="h-3.5 w-3.5" /> },
+    { label: "Customer LTV", value: 3800, prefix: "$", suffix: "", change: "+12%", icon: <Package className="h-3.5 w-3.5" /> },
     { label: "Customer Retention", value: 78, prefix: "", suffix: "%", change: "+6%", icon: <Users className="h-3.5 w-3.5" /> },
-    { label: "Waste Reduction", value: 64, prefix: "−", suffix: "%", change: "vs last month", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
+    { label: "Churn Rate", value: 3, prefix: "", suffix: "%", change: "−42% vs prior", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
   ]
   return (
     <div className="w-full rounded-2xl overflow-hidden" style={{ background: "rgba(8, 12, 24, 0.98)", border: "1px solid rgba(14, 165, 233, 0.2)", boxShadow: "0 40px 80px rgba(0,0,0,0.4), 0 0 60px rgba(14, 165, 233, 0.08)" }}>
@@ -148,8 +148,8 @@ function MockDashboard() {
             </div>
           </div>
           <div className="col-span-5 rounded-xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="text-xs font-semibold text-white mb-2.5">Top Menu Items</div>
-            {[{ name: "Grilled Salmon", pct: 92 },{ name: "Caesar Salad", pct: 78 },{ name: "Ribeye Steak", pct: 65 },{ name: "Pasta Primavera", pct: 54 }].map((item, i) => (
+            <div className="text-xs font-semibold text-white mb-2.5">Top Revenue Streams</div>
+            {[{ name: "Enterprise Plan", pct: 92 },{ name: "Growth Plan", pct: 78 },{ name: "E-commerce", pct: 65 },{ name: "Agency Retainer", pct: 54 }].map((item, i) => (
               <div key={i} className="mb-2">
                 <div className="flex justify-between mb-0.5" style={{ fontSize: "10px" }}>
                   <span style={{ color: "rgba(255,255,255,0.6)" }}>{item.name}</span>
@@ -170,9 +170,9 @@ function MockDashboard() {
         <div className="rounded-xl p-2.5" style={{ background: "rgba(14, 165, 233, 0.05)", border: "1px solid rgba(14, 165, 233, 0.12)" }}>
           <div className="flex items-center gap-6">
             {[
-              { icon: <AlertCircle className="h-3 w-3" style={{ color: "#FBBF24" }} />, text: "Tomatoes below par level" },
-              { icon: <CheckCircle2 className="h-3 w-3" style={{ color: "#34D399" }} />, text: "Friday staffing optimized" },
-              { icon: <TrendingUp className="h-3 w-3" style={{ color: "#0EA5E9" }} />, text: "Weekend forecast ready" },
+              { icon: <AlertCircle className="h-3 w-3" style={{ color: "#FBBF24" }} />, text: "Trial conversion below target" },
+              { icon: <CheckCircle2 className="h-3 w-3" style={{ color: "#34D399" }} />, text: "Q2 pipeline up 18%" },
+              { icon: <TrendingUp className="h-3 w-3" style={{ color: "#0EA5E9" }} />, text: "Churn forecast: improving" },
             ].map((a, i) => (
               <div key={i} className="flex items-center gap-1.5" style={{ fontSize: "10px" }}>
                 {a.icon}<span style={{ color: "rgba(255,255,255,0.45)" }}>{a.text}</span>
@@ -185,7 +185,7 @@ function MockDashboard() {
   )
 }
 
-const integrations = ["Square", "Toast", "Lightspeed", "Shopify POS", "QuickBooks"]
+const integrations = ["Square", "Stripe", "Shopify", "HubSpot", "QuickBooks"]
 
 export function EnhancedHeroSection() {
   const { theme } = useTheme()
@@ -290,7 +290,7 @@ export function EnhancedHeroSection() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: 1.6, type: "spring", stiffness: 200 }}>
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />
-              Square · Live Sync Active
+              Stripe · Live Sync Active
             </motion.div>
 
             <MockDashboard />
