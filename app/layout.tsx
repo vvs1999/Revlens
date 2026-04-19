@@ -8,42 +8,54 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://revlens.netlify.app"),
+  metadataBase: new URL("https://revlens.ca"),
   title: {
-    default: "RevLens — AI Analytics for Independent Operators",
-    template: "%s — RevLens",
+    default: "RevLens — Business Intelligence for Independent Operators",
+    template: "%s | RevLens",
   },
   description:
-    "RevLens gives independent restaurants, cafés, retail stores, and salons the same data intelligence as enterprise chains — at a fraction of the cost.",
+    "RevLens connects your data, builds your analytics dashboard, and delivers a plain-English AI report every Monday. Built for SaaS companies, e-commerce brands, marketing agencies, and independent operators.",
   keywords: [
-    "restaurant analytics",
-    "café analytics",
-    "retail analytics",
-    "salon analytics",
+    "business intelligence",
+    "SaaS analytics",
+    "e-commerce analytics",
+    "agency analytics",
+    "revenue analytics",
+    "MRR tracking",
+    "churn analytics",
+    "AI weekly report",
+    "done-for-you analytics",
     "independent operator analytics",
-    "POS analytics",
-    "AI weekly digest",
-    "small business data",
-    "local business analytics",
+    "small business analytics",
+    "AI business insights",
+    "data dashboard",
+    "Monday morning report",
+    "revenue reporting",
+    "customer retention analytics",
   ],
   authors: [{ name: "RevLens" }],
   creator: "RevLens",
   openGraph: {
     type: "website",
     siteName: "RevLens",
-    title: "RevLens — AI Analytics for Independent Operators",
+    title: "RevLens — Business Intelligence for Independent Operators",
     description:
-      "Stop running blind. RevLens connects to your POS and delivers plain-English insights every Monday.",
-    url: "https://revlens.netlify.app",
+      "Connect your data. Get a plain-English AI report every Monday. No analysts, no dashboards to learn — just answers.",
+    url: "https://revlens.ca",
+    locale: "en_CA",
   },
   twitter: {
     card: "summary_large_image",
-    title: "RevLens — AI Analytics for Independent Operators",
-    description: "Weekly AI digest. Live dashboard. Built for independent operators.",
+    title: "RevLens — Business Intelligence for Independent Operators",
+    description:
+      "Done-for-you analytics for SaaS, e-commerce, agencies, and operators. Weekly AI digest. Live dashboard. Starting at $499/month.",
   },
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: "https://revlens.ca",
   },
 }
 

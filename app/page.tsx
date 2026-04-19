@@ -11,7 +11,7 @@ import Link from "next/link"
 import { ArrowRight, LineChart, PieChart, TrendingUp, Plug, Clock, ShieldCheck, BarChart3 } from "lucide-react"
 
 const integrationCategories = [
-  { label: "POS Systems", items: ["Square", "Toast", "Lightspeed", "Clover"], color: "#0EA5E9" },
+  { label: "POS & Payments", items: ["Square", "Stripe", "Lightspeed", "Clover"], color: "#0EA5E9" },
   { label: "ERP & Accounting", items: ["QuickBooks", "Sage", "Xero"], color: "#0284C7" },
   { label: "CRM & eCommerce", items: ["Shopify", "HubSpot", "WooCommerce"], color: "#0EA5E9" },
 ]
@@ -32,7 +32,7 @@ export default function Home() {
                 How It Works
               </span>
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-foreground">
-                Up and Running in 48 Hours
+                Simple Setup, Real Insights
               </h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 No IT team. No setup headaches. Three steps and you get insights every Monday morning.
@@ -53,15 +53,15 @@ export default function Home() {
                 {
                   step: "1",
                   icon: <Plug className="h-7 w-7" />,
-                  title: "Connect Your POS",
-                  body: "We integrate directly with Square, Toast, Lightspeed, and more. Fully automated — no exports, no manual uploads, no IT required.",
+                  title: "Connect Your Tools",
+                  body: "We integrate with your billing, POS, CRM, and e-commerce platforms. Fully automated — no exports, no manual uploads, no IT required.",
                   detail: "Setup takes under 15 minutes",
                 },
                 {
                   step: "2",
                   icon: <BarChart3 className="h-7 w-7" />,
                   title: "We Build Your Dashboard",
-                  body: "Our team configures a custom analytics setup within 48 hours, tracking the metrics that actually matter for your business type.",
+                  body: "Our team configures a custom analytics setup for your business, tracking the metrics that actually matter for your specific industry.",
                   detail: "Tailored to your industry",
                 },
                 {
@@ -118,9 +118,9 @@ export default function Home() {
           </AnimateOnScroll>
           <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12 mt-12">
             {[
-              { icon: <LineChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Unsure which products sell best?", body: "Sales analysis identifies your top performers and slow movers — so you stock smarter and market sharper." },
-              { icon: <PieChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Struggling with overstock or waste?", body: "Inventory optimization tools reduce spoilage and dead stock — critical for businesses with tight margins." },
-              { icon: <TrendingUp className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Missing out on revenue growth?", body: "Predictive analytics surface opportunities before you lose them — peak hours, seasonal trends, staffing gaps." },
+              { icon: <LineChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Not sure which channels drive growth?", body: "Revenue analysis identifies your highest-value customers, products, and channels — so you invest where it counts, not where it feels right." },
+              { icon: <PieChart className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Losing customers without knowing why?", body: "Retention analytics surface churn signals early — so you can act before revenue walks out the door." },
+              { icon: <TrendingUp className="h-10 w-10" style={{ color: "#0EA5E9" }} />, title: "Missing out on revenue opportunities?", body: "Predictive analytics surface opportunities before you lose them — seasonal trends, upsell windows, and demand spikes." },
             ].map((card, i) => (
               <AnimateOnScroll key={i} animation="slide-up" delay={i * 0.1}>
                 <div className="enhanced-card p-6 flex flex-col items-center space-y-4 text-center h-full">
@@ -176,7 +176,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mt-12">
             {[
-              { icon: <Clock className="h-5 w-5" />, text: "Live in 48 hours or less" },
+              { icon: <Clock className="h-5 w-5" />, text: "Guided onboarding, end to end" },
               { icon: <ShieldCheck className="h-5 w-5" />, text: "No IT team required" },
               { icon: <Plug className="h-5 w-5" />, text: "API-first, no manual exports" },
             ].map((s, i) => (

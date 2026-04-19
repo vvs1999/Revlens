@@ -3,14 +3,56 @@
 import { PageLayout } from "@/components/page-layout"
 import { Button } from "@/components/ui/button"
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
-import { ArrowRight, UtensilsCrossed, ShoppingBag, Coffee, Store, Scissors } from "lucide-react"
+import { ArrowRight, UtensilsCrossed, ShoppingBag, Coffee, Store, Scissors, Code2, ShoppingCart, Briefcase } from "lucide-react"
 import { useState } from "react"
 
 const caseStudies = [
   {
+    id: 7,
+    title: "SaaS Startup: Eliminating Churn Blind Spots",
+    excerpt: "A B2B SaaS company connects Stripe and HubSpot to RevLens — surfacing which cohorts churn fastest and where expansion revenue is being left on the table.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    industry: "SaaS",
+    icon: <Code2 className="h-4 w-4" />,
+    results: [
+      { label: "Churn Reduction", value: "−35–50%" },
+      { label: "Net Revenue Retention", value: "+22%" },
+      { label: "Time to Insight", value: "< 1 day" },
+    ],
+    filter: "saas",
+  },
+  {
+    id: 8,
+    title: "E-commerce Brand: Turning SKU Data Into Margin Strategy",
+    excerpt: "A DTC brand connects Shopify to RevLens and discovers which SKUs are actually profitable after returns and acquisition costs — rebuilding their catalogue around real margin.",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
+    industry: "E-commerce",
+    icon: <ShoppingCart className="h-4 w-4" />,
+    results: [
+      { label: "Gross Margin Lift", value: "+18–28%" },
+      { label: "Repeat Purchase Rate", value: "+35%" },
+      { label: "CAC Reduction", value: "−25%" },
+    ],
+    filter: "ecommerce",
+  },
+  {
+    id: 9,
+    title: "Marketing Agency: Knowing Which Clients Are Worth Keeping",
+    excerpt: "An agency connects their billing and project tools to RevLens — finally seeing profit per client, team utilization gaps, and which retainers are at risk before it's too late.",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
+    industry: "Agency",
+    icon: <Briefcase className="h-4 w-4" />,
+    results: [
+      { label: "Margin Per Client", value: "+30–45%" },
+      { label: "Team Utilization", value: "+25%" },
+      { label: "Client Churn", value: "−40%" },
+    ],
+    filter: "agency",
+  },
+  {
     id: 1,
     title: "Full-Service Restaurant: Cutting Waste While Growing Revenue",
-    excerpt: "A mid-size restaurant connecting Toast POS to RevLens gains real-time visibility into which menu items drive margin — and where waste is quietly eating profits.",
+    excerpt: "A mid-size restaurant connecting their POS to RevLens gains real-time visibility into which menu items drive margin — and where waste is quietly eating profits.",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
     industry: "Restaurant",
     icon: <UtensilsCrossed className="h-4 w-4" />,
@@ -24,7 +66,7 @@ const caseStudies = [
   {
     id: 2,
     title: "Café & Coffee Shop: Menu Intelligence for Higher Ticket Values",
-    excerpt: "A café using Square POS discovers the top 20% of menu items driving 80% of revenue — and builds a smarter, tighter menu around what actually sells.",
+    excerpt: "A café discovers the top 20% of menu items driving 80% of revenue — and builds a smarter, tighter menu around what actually sells.",
     image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
     industry: "Café",
     icon: <Coffee className="h-4 w-4" />,
@@ -38,7 +80,7 @@ const caseStudies = [
   {
     id: 3,
     title: "Independent Retail: Smarter Inventory, Less Dead Stock",
-    excerpt: "A boutique retail store connecting Lightspeed gets a weekly snapshot of what's moving, what's stagnant, and what to reorder before running out.",
+    excerpt: "A boutique retail store gets a weekly snapshot of what's moving, what's stagnant, and what to reorder before running out.",
     image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80",
     industry: "Retail",
     icon: <ShoppingBag className="h-4 w-4" />,
@@ -52,7 +94,7 @@ const caseStudies = [
   {
     id: 4,
     title: "Convenience Store: Maximizing Revenue Per Square Foot",
-    excerpt: "A multi-location convenience store owner understands which products and placements drive transaction value — and which are wasting shelf space.",
+    excerpt: "A multi-location owner understands which products and placements drive transaction value — and which are wasting shelf space.",
     image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=800&q=80",
     industry: "Retail",
     icon: <Store className="h-4 w-4" />,
@@ -66,7 +108,7 @@ const caseStudies = [
   {
     id: 5,
     title: "Beauty & Wellness Studio: Filling the Calendar, Growing Retention",
-    excerpt: "A salon connecting their booking system gets clarity on which services drive repeat visits, which stylists retain clients, and where revenue gaps are hiding.",
+    excerpt: "A salon gets clarity on which services drive repeat visits, which staff retain clients, and where revenue gaps are hiding.",
     image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80",
     industry: "Service",
     icon: <Scissors className="h-4 w-4" />,
@@ -80,7 +122,7 @@ const caseStudies = [
   {
     id: 6,
     title: "Grocery & Fresh Market: Reducing Perishable Waste",
-    excerpt: "A fresh market uses demand forecasting to dramatically cut perishable waste while maintaining optimal stock levels and improving margin.",
+    excerpt: "A fresh market uses demand forecasting to cut perishable waste while maintaining optimal stock levels and improving margin.",
     image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80",
     industry: "Retail",
     icon: <ShoppingBag className="h-4 w-4" />,
@@ -95,6 +137,9 @@ const caseStudies = [
 
 const filters = [
   { label: "All Industries", value: "all" },
+  { label: "SaaS", value: "saas" },
+  { label: "E-commerce", value: "ecommerce" },
+  { label: "Agency", value: "agency" },
   { label: "Restaurant", value: "restaurant" },
   { label: "Retail", value: "retail" },
   { label: "Service", value: "service" },
@@ -139,18 +184,16 @@ export default function CaseStudiesPage() {
         <div className="container px-4 md:px-6">
 
           {/* Filter tabs */}
-          <div className="flex justify-center mb-10">
-            <div className="flex gap-1 p-1 rounded-xl" style={{ background: "hsl(var(--muted))" }}>
-              {filters.map((f) => (
-                <button key={f.value} onClick={() => setActiveFilter(f.value)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                  style={activeFilter === f.value
-                    ? { background: "#0284C7", color: "#ffffff" }
-                    : { color: "hsl(var(--muted-foreground))", background: "transparent" }}>
-                  {f.label}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            {filters.map((f) => (
+              <button key={f.value} onClick={() => setActiveFilter(f.value)}
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                style={activeFilter === f.value
+                  ? { background: "#0284C7", color: "#ffffff" }
+                  : { background: "hsl(var(--muted))", color: "hsl(var(--muted-foreground))" }}>
+                {f.label}
+              </button>
+            ))}
           </div>
 
           {/* Card grid */}
@@ -207,7 +250,7 @@ export default function CaseStudiesPage() {
               Ready to Become Our First Success Story?
             </h2>
             <p className="text-white/80 text-lg">
-              Book a free demo and we'll show you exactly what RevLens looks like connected to your POS or ERP. No commitments. No fake numbers.
+              Book a free demo and we'll show you exactly what RevLens looks like connected to your data. No commitments. No fake numbers.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button size="lg" style={{ background: "#ffffff", color: "#0284C7", fontWeight: 600 }}

@@ -3,11 +3,11 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Apply for early access to RevLens or ask us anything. We respond personally within 24 hours.",
+    "Book a free 30-minute call or send us a message. We respond personally within 24 hours. No bots, no runaround.",
   openGraph: {
-    title: "Contact RevLens",
-    description: "Apply for early access. We respond within 24 hours.",
-    url: "https://revlens.netlify.app/contact",
+    title: "Talk to RevLens",
+    description: "Book a call or send a message. We reply personally within 24 hours.",
+    url: "https://revlens.ca/contact",
   },
 }
 

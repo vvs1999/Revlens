@@ -120,3 +120,9 @@
   .dark .section-base { background: #0A0F1E; }
   .dark .section-alt-1 { background: #0D1526; }
 }
+
+/* Softer placeholder text across all inputs and textareas */
+input::placeholder,
+textarea::placeholder {
+  opacity: 0.42;
+}

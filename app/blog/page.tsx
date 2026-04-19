@@ -16,7 +16,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Feb 15, 2025",
     readTime: "8 min read",
-    slug: "data-analytics-profitability",
+    url: "https://medium.com/@revlensai09",
     featured: true,
   },
   {
@@ -28,7 +28,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Jan 28, 2025",
     readTime: "6 min read",
-    slug: "inventory-mismanagement",
+    url: "https://medium.com/@revlensai09",
     featured: true,
   },
   {
@@ -40,7 +40,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Jan 10, 2025",
     readTime: "10 min read",
-    slug: "customer-segmentation",
+    url: "https://medium.com/@revlensai09",
     featured: true,
   },
   {
@@ -52,7 +52,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Dec 2, 2024",
     readTime: "7 min read",
-    slug: "predictive-analytics-seasonal",
+    url: "https://medium.com/@revlensai09",
     featured: false,
   },
   {
@@ -64,7 +64,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Nov 30, 2024",
     readTime: "9 min read",
-    slug: "data-privacy",
+    url: "https://medium.com/@revlensai09",
     featured: false,
   },
   {
@@ -76,7 +76,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Nov 22, 2024",
     readTime: "8 min read",
-    slug: "data-driven-culture",
+    url: "https://medium.com/@revlensai09",
     featured: false,
   },
   {
@@ -88,7 +88,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Oct 15, 2024",
     readTime: "11 min read",
-    slug: "roi-data-analytics",
+    url: "https://medium.com/@revlensai09",
     featured: false,
   },
   {
@@ -100,7 +100,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Sep 28, 2024",
     readTime: "9 min read",
-    slug: "pos-system-selection",
+    url: "https://medium.com/@revlensai09",
     featured: false,
   },
   {
@@ -112,7 +112,7 @@ const posts = [
     author: "Nitesh V.",
     date: "Sep 5, 2024",
     readTime: "7 min read",
-    slug: "peak-hour-forecasting",
+    url: "https://medium.com/@revlensai09",
     featured: false,
   },
 ]
@@ -218,7 +218,7 @@ export default function BlogPage() {
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <User className="h-3.5 w-3.5" /> {post.author}
                           </div>
-                          <button onClick={() => window.location.href = `/blog/${post.slug}`}
+                          <button onClick={() => window.open(post.url, "_blank", "noopener,noreferrer")}
                             className="text-sm font-medium flex items-center gap-1 group" style={{ color: "#0284C7" }}>
                             Read <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                           </button>
@@ -260,7 +260,7 @@ export default function BlogPage() {
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Calendar className="h-3.5 w-3.5" /> {post.date}
                           </div>
-                          <button onClick={() => window.location.href = `/blog/${post.slug}`}
+                          <button onClick={() => window.open(post.url, "_blank", "noopener,noreferrer")}
                             className="text-sm font-medium flex items-center gap-1 group" style={{ color: "#0284C7" }}>
                             Read <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                           </button>

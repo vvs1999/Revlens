@@ -12,7 +12,7 @@ export function Footer() {
           <div className="space-y-4">
             <Logo />
             <p className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>
-              Data analytics built for restaurants and food businesses. Connect your POS and start seeing clearly.
+              Business intelligence for independent operators. Connect your data and start seeing clearly.
             </p>
             <div className="flex items-center gap-2 text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>
               <Mail className="h-4 w-4 flex-shrink-0" style={{ color: "#0EA5E9" }} />
@@ -28,7 +28,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-sm mb-4" style={{ color: "hsl(var(--foreground))" }}>Services</h4>
             <ul className="space-y-2.5">
-              {["Sales Analysis", "Inventory Optimization", "Labour Scheduling", "Revenue Forecasting"].map((item) => (
+              {["Revenue Analytics", "Customer Retention", "AI Weekly Digest", "Revenue Forecasting"].map((item) => (
                 <li key={item}>
                   <Link href="/services" className="text-sm transition-colors hover:text-[#0EA5E9]"
                     style={{ color: "hsl(var(--muted-foreground))" }}>
@@ -48,6 +48,7 @@ export function Footer() {
                 { label: "Case Studies", href: "/case-studies" },
                 { label: "Blog", href: "/blog" },
                 { label: "Contact", href: "/contact" },
+                { label: "Privacy Policy", href: "/privacy" },
               ].map((item) => (
                 <li key={item.label}>
                   <Link href={item.href} className="text-sm transition-colors hover:text-[#0EA5E9]"
@@ -63,7 +64,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-sm mb-4" style={{ color: "hsl(var(--foreground))" }}>Integrations</h4>
             <ul className="space-y-2.5">
-              {["Square", "Toast", "Lightspeed", "QuickBooks", "Shopify POS"].map((item) => (
+              {["Square", "Stripe", "Shopify", "HubSpot", "QuickBooks"].map((item) => (
                 <li key={item}>
                   <span className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>{item}</span>
                 </li>

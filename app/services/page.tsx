@@ -21,7 +21,7 @@ const services = [
       "Pricing optimization recommendations",
       "Competitive market analysis",
     ],
-    stat: { value: "+35%", label: "Average revenue increase for clients in first 6 months" },
+    stat: { value: "+35%", label: "Businesses using weekly data insights report up to 35% revenue growth in 6 months" },
   },
   {
     id: "inventory",
@@ -36,7 +36,7 @@ const services = [
       "Supplier performance analysis",
       "Inventory turnover improvement strategies",
     ],
-    stat: { value: "-22%", label: "Average reduction in food waste within 90 days" },
+    stat: { value: "-22%", label: "Average reduction in excess inventory costs within 90 days of optimization" },
   },
   {
     id: "customers",
@@ -51,7 +51,7 @@ const services = [
       "Targeted marketing recommendations",
       "Customer feedback analysis",
     ],
-    stat: { value: "+45%", label: "Average increase in repeat customer visits" },
+    stat: { value: "+45%", label: "Average increase in repeat purchase rate after implementing targeted retention strategies" },
   },
   {
     id: "growth",
@@ -66,7 +66,7 @@ const services = [
       "Expansion planning and forecasting",
       "Long-term business sustainability models",
     ],
-    stat: { value: "+28%", label: "Average year-over-year revenue growth" },
+    stat: { value: "+28%", label: "Average year-over-year revenue growth for businesses with a defined data strategy" },
   },
 ]
 
@@ -200,18 +200,18 @@ export default function ServicesPage() {
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
               {
-                name: "Starter", price: "$499", period: "/month", desc: "For small businesses getting started with data",
-                features: ["Basic sales analysis", "Monthly reporting", "1 business location", "Email support"],
+                name: "Starter", price: "$499", period: "/month", desc: "For single-location operators getting started with data",
+                features: ["Weekly AI digest by email", "Sales & peak-hours analysis", "1 business location", "Square, Toast, or Lightspeed POS", "Email support"],
                 highlight: false,
               },
               {
-                name: "Growth", price: "$999", period: "/month", desc: "For businesses ready to optimize operations",
-                features: ["Comprehensive analytics", "Weekly reporting", "Up to 3 locations", "Priority support", "Quarterly strategy sessions"],
+                name: "Growth", price: "$999", period: "/month", desc: "For operators ready to optimise and scale",
+                features: ["Everything in Starter", "Customer segmentation & retention", "Inventory & waste tracking", "Up to 3 locations", "Slack or WhatsApp alerts", "Priority support"],
                 highlight: true,
               },
               {
-                name: "Enterprise", price: "Custom", period: "", desc: "For larger businesses with complex needs",
-                features: ["Advanced analytics & AI", "Real-time dashboards", "Unlimited locations", "Dedicated account manager", "Custom integrations"],
+                name: "Scale", price: "Custom", period: "", desc: "For multi-location groups and franchises",
+                features: ["Everything in Growth", "Unlimited locations", "Custom KPI dashboards", "Dedicated account manager", "Custom POS integrations", "Quarterly strategy sessions"],
                 highlight: false,
               },
             ].map((plan, i) => (
@@ -249,7 +249,7 @@ export default function ServicesPage() {
                       ? { background: "#ffffff", color: "#0284C7", fontWeight: 600 }
                       : { background: "#0284C7", color: "#ffffff", fontWeight: 600 }}
                     onClick={() => window.location.href = "/contact"}>
-                    {plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
+                    {plan.name === "Scale" ? "Contact Sales" : "Get Started"}
                   </Button>
                 </div>
               </AnimateOnScroll>

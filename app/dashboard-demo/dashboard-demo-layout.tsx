@@ -3,11 +3,11 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Live Demo",
   description:
-    "See RevLens in action. Explore the live analytics dashboard and AI Weekly Digest across café, restaurant, retail, and salon business types.",
+    "See RevLens in action. Explore the live analytics dashboard and AI Weekly Digest across SaaS, e-commerce, agency, and operator business types.",
   openGraph: {
     title: "RevLens Live Demo",
     description: "See exactly what RevLens looks like with your business data.",
-    url: "https://revlens.netlify.app/dashboard-demo",
+    url: "https://revlens.ca/dashboard-demo",
   },
 }
 
