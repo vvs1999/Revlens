@@ -329,7 +329,7 @@ const severityMap: Record<string, { bg: string; border: string; dot: string; lab
 const BLUE = "#0284C7"
 
 // ── Chart card wrapper — BI-style elevated panel ─────────────────────
-function ChartCard({ title, description, children, fullWidth }: { title: string; description?: string; children: React.ReactNode; fullWidth?: boolean }) {
+function ChartCard({ title, description, children, fullWidth, flushChart }: { title: string; description?: string; children: React.ReactNode; fullWidth?: boolean; flushChart?: boolean }) {
   return (
     <div className="rounded-xl overflow-hidden" style={{
       background: "hsl(var(--card))",
@@ -342,7 +342,7 @@ function ChartCard({ title, description, children, fullWidth }: { title: string;
           {description && <p className="text-xs mt-0.5" style={{ color: "hsl(var(--muted-foreground))" }}>{description}</p>}
         </div>
       </div>
-      <div className="px-4 pb-4 pt-2">{children}</div>
+      <div className={flushChart ? "pb-2 pt-2" : "px-4 pb-4 pt-2"}>{children}</div>
     </div>
   )
 }
@@ -518,7 +518,7 @@ export default function DashboardDemoPage() {
                       {chartTab === "overview" && (
                         <>
                           {/* Row 1: Full-width combo chart */}
-                          <ChartCard title={`Monthly ${category === "saas" ? "MRR" : category === "agency" ? "Billings" : category === "ecommerce" ? "GMV" : "Revenue"} & Month-over-Month Growth`} description="Bars = revenue · Red line = MoM% change" fullWidth>
+                          <ChartCard title={`Monthly ${category === "saas" ? "MRR" : category === "agency" ? "Billings" : category === "ecommerce" ? "GMV" : "Revenue"} & Month-over-Month Growth`} description="Monthly revenue trend" fullWidth>
                             <div className="w-full h-[320px]"><RevenueComboChart category={category} /></div>
                           </ChartCard>
                           {/* Row 2: 60/40 split */}
