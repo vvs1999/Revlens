@@ -14,12 +14,12 @@ interface Message {
   text: string
 }
 
-const BUSINESS_TYPES = ["Restaurant", "Café", "Retail Store", "Salon", "Other"]
+const BUSINESS_TYPES = ["SaaS / Subscription", "E-commerce", "Agency", "Restaurant / Café", "Retail / Other"]
 const PAIN_POINTS = [
   "I don't know where my revenue is leaking",
-  "Too much waste / overstock",
-  "I can't predict busy vs slow periods",
+  "I can't see churn coming until it's too late",
   "I have data but don't know what to do with it",
+  "I can't predict slow vs busy periods",
 ]
 
 async function sendToSheet(data: {
@@ -82,7 +82,7 @@ export function ChatBot() {
       setStep("pain_point")
     } else if (step === "pain_point") {
       setData(d => ({ ...d, painPoint: choice }))
-      addBot("That's exactly what RevLens is built for. We connect to your POS, build your analytics dashboard, and send you a plain-English summary every Monday — plus an AI you can ask follow-up questions.\n\nWhat's your name?")
+      addBot("That's exactly what RevLens is built for. We connect to your data sources, build your analytics dashboard, and send you a plain-English summary every Monday — plus an AI you can ask follow-up questions.\n\nWhat's your name?")
       setStep("name")
     }
   }
@@ -108,7 +108,7 @@ export function ChatBot() {
       const updated = { ...data, email: val }
       setData(updated)
       await sendToSheet(updated)
-      addBot(`Perfect. We'll be in touch within 24 hours, ${data.name}. In the meantime, check out the live demo at revlens.netlify.app/dashboard-demo to see exactly what your dashboard could look like. 🚀`)
+      addBot(`Perfect. We'll be in touch within 24 hours, ${data.name}. In the meantime, check out the live demo at revlens.ca/dashboard-demo to see exactly what your dashboard could look like. 🚀`)
       setStep("done")
     }
   }
