@@ -4,7 +4,6 @@ import { PageLayout } from "@/components/page-layout"
 import { EnhancedHeroSection } from "@/components/enhanced-hero-section"
 import { IndustryExamples } from "@/components/industry-examples"
 import { AnimateOnScroll } from "@/components/animate-on-scroll"
-import { ChatBot } from "@/components/chat-bot"
 import { MarqueeBanner } from "@/components/marquee-banner"
 import { CompetitorSection } from "@/components/competitor-section"
 import Link from "next/link"
@@ -193,7 +192,6 @@ export default function Home() {
         <IndustryExamples />
       </section>
 
-      <ChatBot />
     </PageLayout>
   )
 }
