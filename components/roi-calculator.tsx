@@ -171,7 +171,7 @@ export function ROICalculator() {
           <p className="text-sm text-muted-foreground">
             Want a more detailed analysis? Book a free consultation with our data experts.
           </p>
-          <Button variant="outline" style={{ background: "#0284C7", color: "#ffffff", fontWeight: 600 }} className="px-6">
+          <Button className="btn-primary px-6">
             Book Free Consultation
           </Button>
         </CardFooter>

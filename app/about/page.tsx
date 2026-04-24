@@ -69,7 +69,7 @@ export default function AboutPage() {
                 The Problem No One Was Solving
               </h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Independent operators sit on a goldmine of data — POS transactions, booking history, inventory movements, customer patterns. But without the right lens, it's just noise.
+                Independent operators sit on a goldmine of data — transactions, subscriptions, customer patterns, revenue signals. But without the right lens, it's just noise.
               </p>
             </div>
           </AnimateOnScroll>
@@ -84,7 +84,7 @@ export default function AboutPage() {
               {
                 icon: <Brain className="h-6 w-6" />,
                 title: "Enterprise tools are overkill.",
-                desc: "Tableau, Looker, Power BI — all built for companies with dedicated data teams and six-figure budgets. An independent café owner shouldn't need a data scientist to understand their business.",
+                desc: "Tableau, Looker, Power BI — all built for companies with dedicated data teams and six-figure budgets. An independent operator shouldn't need a data scientist to understand their business.",
               },
               {
                 icon: <Eye className="h-6 w-6" />,
@@ -166,8 +166,8 @@ export default function AboutPage() {
               },
               {
                 icon: <BarChart2 className="h-6 w-6" />,
-                title: "Live Analytics Dashboard",
-                desc: "Revenue trends, customer segments, peak hours, location performance — all in one place, connected directly to your POS. No exports, no spreadsheets, no manual work.",
+                title: "Live Reporting",
+                desc: "Revenue trends, customer segments, retention, and performance — all in one place, connected directly to your tools. No exports, no spreadsheets, no manual work.",
                 tag: "Core Feature",
               },
               {

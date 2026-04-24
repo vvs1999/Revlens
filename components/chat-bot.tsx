@@ -14,12 +14,12 @@ interface Message {
   text: string
 }
 
-const BUSINESS_TYPES = ["SaaS / Subscription", "E-commerce", "Agency", "Restaurant / Café", "Retail / Other"]
+const BUSINESS_TYPES = ["SaaS / Subscription", "E-commerce", "Agency", "Retail / Consumer", "Other"]
 const PAIN_POINTS = [
   "I don't know where my revenue is leaking",
   "I can't see churn coming until it's too late",
-  "I have data but don't know what to do with it",
-  "I can't predict slow vs busy periods",
+  "I have data but no idea what it's telling me",
+  "I want to ask questions and get real answers",
 ]
 
 async function sendToSheet(data: {
@@ -57,7 +57,7 @@ export function ChatBot() {
   useEffect(() => {
     if (open && messages.length === 0) {
       setTimeout(() => {
-        addBot("Hi! I'm Lens 👋 RevLens's AI assistant. I help independent operators figure out if RevLens is a good fit for their business. What type of business do you run?")
+        addBot("Hi! I'm Lens 👋 RevLens's AI assistant. I help you figure out if RevLens is the right fit — and what your AI analyst could do for your business. What type of business do you run?")
         setStep("business_type")
       }, 400)
     }
@@ -82,7 +82,7 @@ export function ChatBot() {
       setStep("pain_point")
     } else if (step === "pain_point") {
       setData(d => ({ ...d, painPoint: choice }))
-      addBot("That's exactly what RevLens is built for. We connect to your data sources, build your analytics dashboard, and send you a plain-English summary every Monday — plus an AI you can ask follow-up questions.\n\nWhat's your name?")
+      addBot("That's exactly what RevLens is built for. We connect your tools, build your data infrastructure, and deploy an AI analyst that actually knows your numbers — not generic answers.\n\nWhat's your name?")
       setStep("name")
     }
   }

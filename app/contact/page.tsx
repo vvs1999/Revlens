@@ -372,7 +372,7 @@ export default function ContactPage() {
                 </Button>
                 <Button variant="outline"
                   style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", background: "transparent" }}
-                  onClick={() => window.location.href = "/services"}>
+                  onClick={() => window.location.href = "/pricing"}>
                   See Pricing
                 </Button>
               </div>

@@ -52,7 +52,7 @@ const caseStudies = [
   {
     id: 1,
     title: "Full-Service Restaurant: Cutting Waste While Growing Revenue",
-    excerpt: "A mid-size restaurant connecting their POS to RevLens gains real-time visibility into which menu items drive margin — and where waste is quietly eating profits.",
+    excerpt: "A mid-size restaurant connects their billing and inventory data to RevLens, gaining real-time visibility into which menu items drive margin — and where waste is quietly eating profits.",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
     industry: "Restaurant",
     icon: <UtensilsCrossed className="h-4 w-4" />,
